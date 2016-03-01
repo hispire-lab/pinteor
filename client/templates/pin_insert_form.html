@@ -1,0 +1,15 @@
+<template name="pin_insert_form">
+  <div class="row">
+    <div class="col-sm-6">
+      {{#autoForm collection="Pins" id="pin_insert_form" type="insert"}}
+        <fieldset>
+          <legend>Add a Pin</legend>
+          {{> afQuickField name='title'}}
+          {{> afQuickField name='imgUrl'}}
+          {{> afFieldInput name='boardId' type='hidden' value=boardId}}
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Create</button>
+      {{/autoForm}}
+    </div>
+  </div>
+</template>

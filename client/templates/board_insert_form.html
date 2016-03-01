@@ -1,0 +1,15 @@
+<template name="board_insert_form">
+  <div class="row">
+    <div class="col-sm-6">
+      {{#autoForm collection="Boards" id="board_insert_form" type="insert"}}
+        <fieldset>
+          <legend>Create a Board</legend>
+          {{> afQuickField name='name'}}
+          {{> afQuickField name='description'}}
+          {{> afQuickField name='isPrivate'}}
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Create</button>
+      {{/autoForm}}
+    </div>
+  </div>
+</template>

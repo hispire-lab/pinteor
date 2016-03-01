@@ -1,0 +1,34 @@
+<template name="board_page">
+  {{#if Template.subscriptionsReady}}
+  <div class="row">
+    <div class="col-sm-6">
+
+      <h1>{{board.name}}</h1>
+      <p>{{board.description}}</p>
+
+      {{#if isOwner board}}
+        <button type="button" class="btn btn-default js-edit-board" name="button" data-toggle="modal" data-target="#updateModal">Edit</button>
+      {{/if}}
+
+   </div>
+ </div>
+
+ <div class="row">
+   <div class="col-sm-6">
+
+     {{#if isOwner board}}
+       {{> pin_insert_form boardId=board._id}}
+     {{/if}}
+
+   </div>
+ </div>
+
+ <div class="row">
+   <div class="col-sm-6">
+     {{> pin_list}}
+   </div>
+ </div>
+
+ {{/if}}
+
+</template>
