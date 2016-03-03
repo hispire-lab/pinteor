@@ -5,6 +5,7 @@
 
       <h1>{{board.name}}</h1>
       <p>{{board.description}}</p>
+      <p>number of pins: {{pinsCount}}</p>
 
       {{#if isOwner board}}
         <button type="button" class="btn btn-default js-edit-board" name="button" data-toggle="modal" data-target="#updateModal">Edit</button>
@@ -26,6 +27,7 @@
  <div class="row">
    <div class="col-sm-6">
      {{> pin_list}}
+     {{> Template.dynamic template=pin_edit_form}}
    </div>
  </div>
 

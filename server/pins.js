@@ -7,11 +7,12 @@ Meteor.publish('Pins', function(username, boardName) {
   }
 
   var board = Boards.findOne({userId: user._id, name: boardName});
-
-  // returns all pins
-  //if ( this.userId === user._id ) {
-
   return Pins.find({userId: user._id, boardId: board._id});
-  //}
+
+});
+
+Meteor.publish('Pin', function(pinId) {
+
+  return Pins.find({_id: pinId});
 
 });

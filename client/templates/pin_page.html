@@ -1,0 +1,17 @@
+<template name="pin_page">
+  {{#if Template.subscriptionsReady}}
+  <div class="row">
+    <div class="col-sm-6">
+
+      <h2>{{pin.title}}</h2>
+      <img src="{{pin.imgUrl}}" class="img-responsive" alt="" />
+
+      {{#if isOwner pin}}
+        <button type="button" class="btn btn-default js-edit-pin" name="button">Edit</button>
+      {{/if}}
+
+   </div>
+ </div>
+ {{/if}}
+
+</template>

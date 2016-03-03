@@ -1,6 +1,6 @@
 Template.user_page.onCreated(function(){
   var self = this;
-  
+
   self.autorun(function() {
     if (FlowRouter.getRouteName() === 'userPage') {
 

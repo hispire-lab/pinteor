@@ -1,5 +1,11 @@
 <template name="board_list">
-  {{#each board in boards}}
-    {{> board_thumbnail board=board}}
-  {{/each}}
+  <div class="row">
+    <div class="col-sm-6">
+      {{#if Template.subscriptionsReady}}
+        {{#each board in boards}}
+          {{> board_thumbnail board=board}}
+        {{/each}}
+      {{/if}}
+    </div>
+  </div>
 </template>

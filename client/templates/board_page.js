@@ -7,7 +7,7 @@ Template.board_page.onCreated(function(){
       var boardName = FlowRouter.getParam('boardName');
 
       self.subscribe('Board', username, boardName);
-      //that.subscribe('pins', username, boardName);
+      self.subscribe('Pins', username, boardName);
     }
   });
 
@@ -15,9 +15,9 @@ Template.board_page.onCreated(function(){
     return Boards.findOne();
   }
 
-  //that.pins = function() {
-  //  return Collections.pins.find();
-  //}
+  self.pinsCount = function() {
+    return Pins.find().count();
+  }
 
 });
 
@@ -31,7 +31,8 @@ Template.board_page.helpers({
     return Template.instance().board();
   },
 
-  //pins: function() {
-  //  return Template.instance().pins();
-  //}
+  pinsCount: function() {
+    return Template.instance().pinsCount();
+  }
+
 })

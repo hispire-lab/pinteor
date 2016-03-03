@@ -1,0 +1,15 @@
+<template name="pin_edit_form">
+  <div class="row">
+    <div class="col-sm-6">
+      {{#autoForm collection="Pins" doc=pin id="pin_edit_form" type="update"}}
+        <fieldset>
+        <legend>Edit a Pin</legend>
+        {{> afQuickField name='title'}}
+        {{> afQuickField name='imgUrl'}}
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Save</button>
+      {{/autoForm}}
+      {{> quickRemoveButton collection="Pins" _id=pin._id class="btn btn-danger"}}
+    </div>
+  </div>
+</template>

@@ -3,6 +3,7 @@
     <h2>{{user.username}}</h2>
     {{> board_insert_form}}
     {{> board_list}}
+    {{> Template.dynamic template=board_edit_form}}
   {{else}}
     {{> not_found_page}}
   {{/if}}

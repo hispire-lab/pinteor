@@ -4,15 +4,13 @@
     <div class="col-sm-6">
       <a href="{{param 'username'}}/{{board.name}}">
         <div class="well">
-
           <h1>{{board.name}}</h1>
           <p>{{board.description}}</p>
-
-          {{#if isOwner board}}
-             <button type="button" class="btn btn-default js-edit-board" name="button" data-toggle="modal" data-target="#updateModal">Edit</button>
-          {{/if}}
        </div>
      </a>
+     {{#if isOwner board}}
+        <button type="button" class="btn btn-default js-edit-board" name="button">Edit</button>
+     {{/if}}
    </div>
  </div>
 

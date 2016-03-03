@@ -1,4 +1,18 @@
 <template name="pin_thumbnail">
-  {{pin.title}}
-  <img src="{{pin.imgUrl}}" class="img-responsive" alt="" />
+  <div class="row">
+    <div class="col-sm-6">
+
+      <a href="{{pathFor 'pinPage' pinId=pin._id}}">
+        <div class="well">
+          <h2>{{pin.title}}</h2>
+          <img src="{{pin.imgUrl}}" class="img-responsive" alt="" />
+        </div>
+      </a>
+
+      {{#if isOwner pin}}
+        <button type="button" class="btn btn-default js-edit-pin" name="button">Edit</button>
+      {{/if}}
+
+    </div>
+  </div>
 </template>
