@@ -7,6 +7,7 @@ Template.pin_thumbnail.helpers({
 Template.pin_thumbnail.events({
   'click .js-edit-pin': function(event, instance){
     event.preventDefault();
+    //console.log(instance);
     BlazeLayout.render('board_page', {
       pin_edit_form: 'pin_edit_form',
       pin: this.pin

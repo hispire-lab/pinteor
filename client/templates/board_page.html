@@ -8,8 +8,10 @@
       <p>number of pins: {{pinsCount}}</p>
 
       {{#if isOwner board}}
-        <button type="button" class="btn btn-default js-edit-board" name="button" data-toggle="modal" data-target="#updateModal">Edit</button>
+        <button type="button" class="btn btn-default js-edit-board" name="button" data-toggle="modal">Edit</button>
       {{/if}}
+
+      {{> Template.dynamic template=board_edit_form data=board}}
 
    </div>
  </div>
