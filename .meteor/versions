@@ -4,6 +4,7 @@ accounts-ui@1.1.6
 accounts-ui-unstyled@1.1.8
 aldeed:autoform@5.8.1
 aldeed:collection2@2.3.1
+aldeed:delete-button@2.0.0
 aldeed:simple-schema@1.1.0
 arillo:flow-router-helpers@0.5.1
 autoupdate@1.2.4

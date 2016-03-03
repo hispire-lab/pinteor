@@ -25,3 +25,4 @@ kadira:flow-router
 kadira:blaze-layout
 aldeed:collection2
 arillo:flow-router-helpers
+aldeed:delete-button
