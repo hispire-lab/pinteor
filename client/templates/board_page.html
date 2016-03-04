@@ -2,23 +2,23 @@
   {{#if Template.subscriptionsReady}}
   <div class="row">
     <div class="col-sm-6">
-
       <h1>{{board.name}}</h1>
       <p>{{board.description}}</p>
       <p>number of pins: {{pinsCount}}</p>
 
       {{#if isOwner board}}
-        <button type="button" class="btn btn-default js-edit-board" name="button" data-toggle="modal">Edit</button>
+        {{#with board}}
+          <button type="button" class="btn btn-default js-edit-board" name="button" data-toggle="modal">Edit</button>
+        {{/with}}
       {{/if}}
 
-      {{> Template.dynamic template=board_edit_form data=board}}
-
+      {{> Template.dynamic template=board_edit_form}}
    </div>
  </div>
 
  <div class="row">
    <div class="col-sm-6">
-
+     <!-- rename isOwner helpers to userIsOwnerOf -->
      {{#if isOwner board}}
        {{> pin_insert_form boardId=board._id}}
      {{/if}}

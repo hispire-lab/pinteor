@@ -10,7 +10,7 @@ Template.board_page.onCreated(function(){
       self.subscribe('Pins', username, boardName);
     }
   });
-  
+
   self.board = function() {
     return Boards.findOne();
   }
@@ -42,7 +42,7 @@ Template.board_page.events({
     event.preventDefault();
     BlazeLayout.render('board_page', {
       board_edit_form: 'board_edit_form',
-      board: this.board
+      board: this
     });
   }
 });
