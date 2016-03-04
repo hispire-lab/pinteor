@@ -25,3 +25,15 @@ Template.pin_page.helpers({
   }
 
 });
+
+Template.pin_page.events({
+
+  'click .js-edit-pin': function(event, instance) {
+    event.preventDefault();
+    BlazeLayout.render('pin_page', {
+      pin_edit_form: 'pin_edit_form',
+      pin: this
+    });
+  }
+
+});

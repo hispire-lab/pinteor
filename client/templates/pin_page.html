@@ -7,8 +7,12 @@
       <img src="{{pin.imgUrl}}" class="img-responsive" alt="" />
 
       {{#if isOwner pin}}
-        <button type="button" class="btn btn-default js-edit-pin" name="button">Edit</button>
+        {{#with pin}}
+          <button type="button" class="btn btn-default js-edit-pin" name="button">Edit</button>
+        {{/with}}
       {{/if}}
+
+      {{> Template.dynamic template=pin_edit_form}}
 
    </div>
  </div>
