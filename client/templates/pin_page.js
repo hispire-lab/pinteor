@@ -4,7 +4,7 @@ Template.pin_page.onCreated(function(){
   self.autorun(function() {
     if (FlowRouter.getRouteName() === 'pinPage') {
       var pinId  = FlowRouter.getParam('pinId');
-      self.subscribe('Pin', pinId);
+      self.subscribe('Pin', pinId, Meteor.userId());
     }
   });
 

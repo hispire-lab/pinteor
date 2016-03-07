@@ -11,8 +11,24 @@ Meteor.publish('Pins', function(username, boardName) {
 
 });
 
-Meteor.publish('Pin', function(pinId) {
+Meteor.publish('Pin', function(pinId, userId) {
 
-  return Pins.find({_id: pinId});
+  var pinCursor = Pins.find({_id: pinId});
+  var pin = pinCursor.fetch()[0];
+  var board = Boards.findOne({_id: pin.boardId});
+
+  // user owns the pin
+  if ( userId === pin.userId ) {
+    return pinCursor;
+  }
+  // user not owns the pin
+  else {
+    if ( board.isPrivate ) {
+      return this.ready();
+    }
+    else {
+      return pinCursor
+    }
+  }
 
 });

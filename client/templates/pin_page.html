@@ -2,18 +2,20 @@
   {{#if Template.subscriptionsReady}}
   <div class="row">
     <div class="col-sm-6">
+      {{#if pin}}
+        <h2>{{pin.title}}</h2>
+        <img src="{{pin.imgUrl}}" class="img-responsive" alt="" />
 
-      <h2>{{pin.title}}</h2>
-      <img src="{{pin.imgUrl}}" class="img-responsive" alt="" />
+        {{#if isOwner pin}}
+          {{#with pin}}
+            <button type="button" class="btn btn-default js-edit-pin" name="button">Edit</button>
+          {{/with}}
+        {{/if}}
 
-      {{#if isOwner pin}}
-        {{#with pin}}
-          <button type="button" class="btn btn-default js-edit-pin" name="button">Edit</button>
-        {{/with}}
+        {{> Template.dynamic template=pin_edit_form}}
+        {{else}}
+          {{> not_found_page}}
       {{/if}}
-
-      {{> Template.dynamic template=pin_edit_form}}
-
    </div>
  </div>
  {{/if}}

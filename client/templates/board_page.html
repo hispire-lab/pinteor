@@ -2,13 +2,14 @@
   {{#if Template.subscriptionsReady}}
   <div class="row">
     <div class="col-sm-6">
+
       <h1>{{board.name}}</h1>
       <p>{{board.description}}</p>
       <p>number of pins: {{pinsCount}}</p>
 
       {{#if isOwner board}}
         {{#with board}}
-          <button type="button" class="btn btn-default js-edit-board" name="button" data-toggle="modal">Edit</button>
+          <button type="button" class="btn btn-default js-edit-board" name="button">Edit</button>
         {{/with}}
       {{/if}}
 
