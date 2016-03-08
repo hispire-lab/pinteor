@@ -8,11 +8,10 @@
           <img src="{{pin.imgUrl}}" class="img-responsive" alt="" />
         </div>
       </a>
-      {{boardNames}}
-      {{#if isOwner pin}}
-        <button type="button" class="btn btn-primary js-move-pin" name="button">Move</button>
-        <button type="button" class="btn btn-default js-edit-pin" name="button">Edit</button>
-      {{/if}}
+        {{#if isOwner pin}}
+          <button type="button" class="btn btn-primary js-move-pin" data-toggle="modal" data-target="#movePinModal">Move</button>
+          <button type="button" class="btn btn-default js-edit-pin" data-toggle="modal" data-target="#editPinModal">Edit</button>
+        {{/if}}
 
     </div>
   </div>

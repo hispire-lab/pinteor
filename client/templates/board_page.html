@@ -9,11 +9,12 @@
 
       {{#if isOwner board}}
         {{#with board}}
-          <button type="button" class="btn btn-default js-edit-board" name="button">Edit</button>
+        <button type="button" class="btn btn-default js-edit-board" data-toggle="modal" data-target="#editBoardModal">Edit</button>
         {{/with}}
       {{/if}}
 
       {{> Template.dynamic template=board_edit_form}}
+      {{> Template.dynamic template=pin_move_form}}
    </div>
  </div>
 

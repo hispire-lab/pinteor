@@ -1,5 +1,36 @@
 <template name="board_edit_form">
-  <div class="row">
+  <!-- Modal -->
+  <div class="modal fade" id="editBoardModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Edit Board</h4>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-6">
+                {{#autoForm collection="Boards" doc=board id="board_edit_form" type="update"}}
+                  <fieldset>
+                  <!--<legend>Edit a Board</legend>-->
+                  {{> afQuickField name='name'}}
+                  {{> afQuickField name='description'}}
+                  {{> afQuickField name='isPrivate'}}
+                  </fieldset>
+                  <button type="submit" class="btn btn-primary">Save</button>
+                {{/autoForm}}
+                {{> quickRemoveButton collection="Boards" _id=board._id class="btn btn-danger"}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END Modal -->
+
+  <!--<div class="row">
     <div class="col-sm-6">
       {{#autoForm collection="Boards" doc=board id="board_edit_form" type="update"}}
         <fieldset>
@@ -12,5 +43,5 @@
       {{/autoForm}}
       {{> quickRemoveButton collection="Boards" _id=board._id class="btn btn-danger"}}
     </div>
-  </div>
+  </div>-->
 </template>
