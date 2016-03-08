@@ -1,39 +1,26 @@
 <template name="pin_move_form">
-  <!-- Modal -->
-  <div class="modal fade" id="movePinModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">Edit Board</h4>
-        </div>
-        <div class="modal-body">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-sm-6">
-                <select id="boardNames" class="" name="board">
-                {{#each board in boardNames}}
-                  <option value="{{board._id}}">{{board.name}}</option>
-                {{/each}}
-                </select>
-                {{#autoForm collection="Pins" doc=pin id="pin_move_form" type="update"}}
-                  <fieldset>
-                  {{> afQuickField type="hidden" id="boardId" name='boardId'}}
+  {{#modal title='Move pin' id='pin-move-modal'}}
+    <div class="row">
+      <div class="col-sm-6">
+        <select id="boardNames" class="" name="board">
+        {{#each board in boardNames}}
+          <option value="{{board._id}}">{{board.name}}</option>
+        {{/each}}
+        </select>
 
-                  </fieldset>
-                  <button type="submit" class="btn btn-primary">Save</button>
-                {{/autoForm}}
-              </div>
-            </div>
-          </div>
-        </div>
+        {{#autoForm collection="Pins" doc=pin id="pin_move_form" type="update"}}
+          <fieldset>
+            {{> afQuickField type="hidden" id="boardId" name='boardId'}}
+          </fieldset>
+          <button type="submit" class="btn btn-primary">Save</button>
+        {{/autoForm}}
       </div>
     </div>
-  </div>
-  <!-- END Modal -->
-<script type="text/javascript">
-$('#boardNames').on('change', function() {
-  $('#boardId').val($(this).val());
-});
-</script>
+
+    <script type="text/javascript">
+    $('#boardNames').on('change', function() {
+      $('#boardId').val($(this).val());
+    });
+    </script>
+  {{/modal}}
 </template>

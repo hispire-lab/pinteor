@@ -1,46 +1,18 @@
 <template name="board_insert_form">
-  <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#insertBoardModal">NEW BOARD</button>
-  <!-- Modal -->
-  <div class="modal fade" id="insertBoardModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">New Board</h4>
-        </div>
-        <div class="modal-body">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-sm-6">
-                {{#autoForm collection="Boards" id="board_insert_form" type="insert"}}
-                  <fieldset>
-                    <legend>Create a Board</legend>
-                    {{> afQuickField name='name'}}
-                    {{> afQuickField name='description'}}
-                    {{> afQuickField name='isPrivate'}}
-                  </fieldset>
-                  <button type="submit" class="btn btn-primary">Create</button>
-                {{/autoForm}}
-              </div>
-            </div>
-          </div>
-        </div>
+  <button type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#board-insert-form">Create</button>
+  {{#modal title='Create a board' id='board-insert-form'}}
+    <div class="row">
+      <div class="col-sm-6">
+        {{#autoForm collection="Boards" id="board_insert_form" type="insert"}}
+          <fieldset>
+            <!--<legend>Create a Board</legend>-->
+            {{> afQuickField name='name'}}
+            {{> afQuickField name='description'}}
+            {{> afQuickField name='isPrivate'}}
+          </fieldset>
+          <button type="submit" class="btn btn-primary">Create</button>
+        {{/autoForm}}
       </div>
     </div>
-  </div>
-  <!-- END Modal -->
-
-  <!--<div class="row">
-    <div class="col-sm-6">
-      {{#autoForm collection="Boards" id="board_insert_form" type="insert"}}
-        <fieldset>
-          <legend>Create a Board</legend>
-          {{> afQuickField name='name'}}
-          {{> afQuickField name='description'}}
-          {{> afQuickField name='isPrivate'}}
-        </fieldset>
-        <button type="submit" class="btn btn-primary">Create</button>
-      {{/autoForm}}
-    </div>
-  </div>-->
+  {{/modal}}
 </template>

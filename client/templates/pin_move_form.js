@@ -8,11 +8,16 @@ Template.pin_move_form.onCreated(function() {
     }
   });
 
+  self.boardNames = function() {
+    return Boards.find().fetch();
+  }
 
 });
 
 Template.pin_move_form.helpers({
+
   boardNames: function() {
-    return Boards.find().fetch();
+    return Template.instance().boardNames();
   }
+
 });

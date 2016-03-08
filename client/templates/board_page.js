@@ -37,6 +37,7 @@ Template.board_page.helpers({
 
 });
 
+
 Template.board_page.events({
   'click .js-edit-board': function(event, instance){
     event.preventDefault();

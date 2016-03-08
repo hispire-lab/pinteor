@@ -1,45 +1,17 @@
 <template name="pin_edit_form">
-  <!-- Modal -->
-  <div class="modal fade" id="editPinModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">Edit Pin</h4>
-        </div>
-        <div class="modal-body">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-sm-6">
-                {{#autoForm collection="Pins" doc=pin id="pin_edit_form" type="update"}}
-                  <fieldset>
-                  <legend>Edit a Pin</legend>
-                  {{> afQuickField name='title'}}
-                  {{> afQuickField name='imgUrl'}}
-                  </fieldset>
-                  <button type="submit" class="btn btn-primary">Save</button>
-                {{/autoForm}}
-                {{> quickRemoveButton collection="Pins" _id=pin._id class="btn btn-danger"}}
-              </div>
-            </div>
-          </div>
-        </div>
+  {{#modal title='Edit pin' id='pin-edit-modal'}}
+    <div class="row">
+      <div class="col-sm-6">
+        {{#autoForm collection="Pins" doc=pin id="pin_edit_form" type="update"}}
+          <fieldset>
+          <legend>Edit a Pin</legend>
+          {{> afQuickField name='title'}}
+          {{> afQuickField name='imgUrl'}}
+          </fieldset>
+          <button type="submit" class="btn btn-primary">Save</button>
+        {{/autoForm}}
+        {{> quickRemoveButton collection="Pins" _id=pin._id class="btn btn-danger"}}
       </div>
     </div>
-  </div>
-  <!-- END Modal -->
-
-  <!--<div class="row">
-    <div class="col-sm-6">
-      {{#autoForm collection="Pins" doc=pin id="pin_edit_form" type="update"}}
-        <fieldset>
-        <legend>Edit a Pin</legend>
-        {{> afQuickField name='title'}}
-        {{> afQuickField name='imgUrl'}}
-        </fieldset>
-        <button type="submit" class="btn btn-primary">Save</button>
-      {{/autoForm}}
-      {{> quickRemoveButton collection="Pins" _id=pin._id class="btn btn-danger"}}
-    </div>
-  </div>-->
+  {{/modal}}
 </template>
