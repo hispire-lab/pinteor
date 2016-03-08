@@ -15,7 +15,6 @@ Template.pin_thumbnail.events({
   },
   'click .js-move-pin': function(event, instance){
     event.preventDefault();
-    console.log(this);
     BlazeLayout.render('board_page', {
       pin_edit_form: 'pin_move_form',
       pin: this.pin

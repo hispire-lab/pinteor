@@ -2,25 +2,13 @@
   {{#modal title='Move pin' id='pin-move-modal'}}
     <div class="row">
       <div class="col-sm-6">
-        <select id="boardNames" class="" name="board">
-        {{#each board in boardNames}}
-          <option value="{{board._id}}">{{board.name}}</option>
-        {{/each}}
-        </select>
-
-        {{#autoForm collection="Pins" doc=pin id="pin_move_form" type="update"}}
+        {{#autoForm doc=pin id="pin_move_form" type="normal" schema="Schemas.PinMoveSchema"}}
           <fieldset>
-            {{> afQuickField type="hidden" id="boardId" name='boardId'}}
+            {{> afQuickField name="boardSelectOptions" options=boardOptions}}
           </fieldset>
           <button type="submit" class="btn btn-primary">Save</button>
         {{/autoForm}}
       </div>
     </div>
-
-    <script type="text/javascript">
-    $('#boardNames').on('change', function() {
-      $('#boardId').val($(this).val());
-    });
-    </script>
   {{/modal}}
 </template>
