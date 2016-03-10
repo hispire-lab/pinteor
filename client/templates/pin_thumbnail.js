@@ -13,6 +13,7 @@ Template.pin_thumbnail.events({
       pin: this.pin
     });
   },
+  
   'click .js-move-pin': function(event, instance){
     event.preventDefault();
     BlazeLayout.render('board_page', {

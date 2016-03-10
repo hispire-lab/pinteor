@@ -2,9 +2,9 @@
   {{#modal title='Move pin' id='pin-move-modal'}}
     <div class="row">
       <div class="col-sm-6">
-        {{#autoForm doc=pin id="pin_move_form" type="normal" schema="Schemas.PinMoveSchema"}}
+        {{#autoForm doc=pin id="pin_move_form" type="normal" schema="PinMoveFormSchema"}}
           <fieldset>
-            {{> afQuickField name="boardSelectOptions" options=boardOptions}}
+            {{> afQuickField name="boardId" firstOption=false options=boardIdsByName}}
           </fieldset>
           <button type="submit" class="btn btn-primary">Save</button>
         {{/autoForm}}
