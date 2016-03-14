@@ -1,5 +1,8 @@
 <template name="pin_move_form">
   {{#modal title='Move pin' id='pin-move-modal'}}
+    {{#each boardRecentlyView}}
+      {{this.name}}
+    {{/each}}
     <div class="row">
       <div class="col-sm-6">
         {{#autoForm doc=pin id="pin_move_form" type="normal" schema="PinMoveFormSchema"}}

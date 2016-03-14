@@ -1,15 +1,24 @@
 Template.board_page.onCreated(function(){
   var self = this;
 
+  var username, boardName;
+
   self.autorun(function() {
     if (FlowRouter.getRouteName() === 'boardPage') {
-      var username = FlowRouter.getParam('username');
-      var boardName = FlowRouter.getParam('boardName');
+      username = FlowRouter.getParam('username');
+      boardName = FlowRouter.getParam('boardName');
 
       self.subscribe('Board', username, boardName);
       self.subscribe('Pins', username, boardName);
     }
   });
+
+  Session.setDefaultPersistent('latest', []);
+  var store = Session.get('latest');
+  store.push(boardName);
+  Session.setPersistent('latest', store);
+  console.log(Session.get('latest'))
+
 
   self.board = function() {
     return Boards.findOne();
@@ -33,6 +42,10 @@ Template.board_page.helpers({
 
   pinsCount: function() {
     return Template.instance().pinsCount();
+  },
+
+  boardsRecentlyView: function() {
+    return Session.get('latest');
   }
 
 });

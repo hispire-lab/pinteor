@@ -25,6 +25,10 @@ Template.pin_move_form.helpers({
     return boards.map(function(board) {
       return {label: board.name, value: board._id}
     });
+  },
+
+  boardRecentlyView: function() {
+    return Session.get('boardsRecentlyView');
   }
 
 });

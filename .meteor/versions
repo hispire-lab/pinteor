@@ -6,6 +6,7 @@ aldeed:autoform@5.8.1
 aldeed:collection2@2.3.1
 aldeed:delete-button@2.0.0
 aldeed:simple-schema@1.1.0
+amplify@1.0.0
 arillo:flow-router-helpers@0.5.1
 autoupdate@1.2.4
 babel-compiler@5.8.24_1
@@ -82,6 +83,7 @@ templating@1.1.5
 templating-tools@1.0.0
 tracker@1.0.9
 twbs:bootstrap@3.3.6
+u2622:persistent-session@0.4.4
 ui@1.0.8
 underscore@1.0.4
 url@1.0.5
