@@ -13,8 +13,6 @@ jquery                  # Helpful client-side library
 tracker                 # Meteor's client-side reactive programming library
 
 standard-minifiers      # JS/CSS minifiers run for production mode
-es5-shim                # ECMAScript 5 compatibility for older browsers.
-ecmascript              # Enable ECMAScript2015+ syntax in app code
 
 insecure                # Allow all DB writes from clients (for prototyping)
 aldeed:autoform
@@ -28,3 +26,6 @@ arillo:flow-router-helpers
 aldeed:delete-button
 reactive-var
 u2622:persistent-session
+ecmascript
+es5-shim
+ramda:ramda

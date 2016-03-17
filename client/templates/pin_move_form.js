@@ -19,16 +19,24 @@ Template.pin_move_form.helpers({
   boardNames: function() {
     return Template.instance().boardNames();
   },
-
+  
   boardIdsByName: function() {
-    var boards = Template.instance().boardNames();
-    return boards.map(function(board) {
-      return {label: board.name, value: board._id}
-    });
-  },
+    var boards = R.map(
+        board => ({label: board.name, value: board._id})
+      , Template.instance().boardNames()
+    );
 
-  boardRecentlyView: function() {
-    return Session.get('boardsRecentlyView');
+    return [
+      {
+        optgroup: 'Recently view',
+        options: R.tail(boards)
+      },
+      {
+        optgroup: 'all',
+        options: boards
+      }
+    ]
+
   }
 
 });
