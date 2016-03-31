@@ -12,7 +12,6 @@ session                 # Client-side reactive dictionary for your app
 jquery                  # Helpful client-side library
 tracker                 # Meteor's client-side reactive programming library
 
-standard-minifiers      # JS/CSS minifiers run for production mode
 
 insecure                # Allow all DB writes from clients (for prototyping)
 aldeed:autoform
@@ -29,3 +28,5 @@ u2622:persistent-session
 ecmascript
 es5-shim
 ramda:ramda
+standard-minifier-css
+standard-minifier-js
