@@ -13,5 +13,4 @@ Meteor.publish('Boards', function(username) {
   else {
     return Boards.find({userId: user._id, isPrivate: false});
   }
-
 });
