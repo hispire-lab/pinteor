@@ -17,6 +17,10 @@
     "rules": {}
   },
   "dependencies": {
-    "meteor-node-stubs": "~0.2.0"
+    "browser": "^0.2.6",
+    "growl": "^1.9.2",
+    "jade": "^1.11.0",
+    "meteor-node-stubs": "~0.2.0",
+    "mocha": "^2.4.5"
   }
 }

@@ -13,7 +13,6 @@ jquery                  # Helpful client-side library
 tracker                 # Meteor's client-side reactive programming library
 
 
-insecure                # Allow all DB writes from clients (for prototyping)
 aldeed:autoform
 accounts-ui
 accounts-password
@@ -30,3 +29,8 @@ es5-shim
 ramda:ramda
 standard-minifier-css
 standard-minifier-js
+mdg:validated-method
+practicalmeteor:mocha
+practicalmeteor:chai
+xolvio:cleaner
+dburles:factory
