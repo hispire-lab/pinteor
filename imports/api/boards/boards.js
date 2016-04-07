@@ -19,16 +19,13 @@ Boards.schema = new SimpleSchema({
     max: 10,
     unique: true,
   },
-
   description: {
     type: String,
     optional: true,
   },
-
   createdAt: {
     type: Date,
   },
-
   userId: {
     type: String,
     regEx: SimpleSchema.RegEx.Id,
