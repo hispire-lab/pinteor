@@ -34,3 +34,4 @@ practicalmeteor:mocha
 practicalmeteor:chai
 xolvio:cleaner
 dburles:factory
+dburles:collection-helpers

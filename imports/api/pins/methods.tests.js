@@ -40,9 +40,7 @@ if (Meteor.isServer) {
       });
       it('should insert a pin in a board when the user is logged in', function () {
         const userId = Random.id();
-        const board = Factory.create('board', {
-          userId,
-        });
+        const board = Factory.create('board', { userId });
         const pinId = insert._execute({ userId }, {
           boardId: board._id,
           title: 'pin A',

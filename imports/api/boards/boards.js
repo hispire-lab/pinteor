@@ -30,6 +30,10 @@ Boards.schema = new SimpleSchema({
     type: String,
     regEx: SimpleSchema.RegEx.Id,
   },
+  isPrivate: {
+    type: Boolean,
+    defaultValue: false,
+  },
 });
 
 Boards.attachSchema(Boards.schema);

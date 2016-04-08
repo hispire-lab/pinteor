@@ -7,7 +7,7 @@ import { chai } from 'meteor/practicalmeteor:chai';
 import { Random } from 'meteor/random';
 import faker from 'faker';
 import { Boards } from './boards.js';
-import { insert } from './methods.js';
+import { insert, makePrivate } from './methods.js';
 
 /*
  * FIXME:
@@ -22,6 +22,7 @@ Factory.define('board', Boards, {
   description: faker.lorem.sentence(),
   createdAt: new Date(),
   userId: Random.id(),
+  isPrivate: false,
 });
 
 if (Meteor.isServer) {
@@ -43,9 +44,7 @@ if (Meteor.isServer) {
       });
       it('should throw an error when user is not logged in', function () {
         chai.assert.throws(() => {
-          insert._execute({}, {
-            name: 'board A',
-          });
+          insert._execute({}, { name: 'board A' });
         }, Meteor.Error, /Must be logged in to create a board./);
       });
       it('should create new date if no date exists', function () {
@@ -62,6 +61,37 @@ if (Meteor.isServer) {
         }).createdAt;
 
         chai.assert.equal(actualDate.getTime(), expectedDate.getTime());
+      });
+    });
+    describe('Boards.methods.makePrivate', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      it('should not make private a board when the user is not logged', function () {
+        const boardId = Factory.create('board')._id;
+        chai.assert.throws(() => {
+          makePrivate._execute({}, { boardId });
+        }, Meteor.Error, /Must be logged in to make private a board./);
+      });
+      it('should not make private a board when the user is not owner', function () {
+        const boardId = Factory.create('board')._id;
+        // this user id is different to the userId created by the factory.
+        const userId = Random.id();
+        chai.assert.throws(() => {
+          makePrivate._execute({ userId }, { boardId });
+        }, Meteor.Error, /Cannot make private a board that is not yours./);
+      });
+      it('should make private a public board when the user is logged and is owner', function () {
+        const board = Factory.create('board');
+        makePrivate._execute({ userId: board.userId }, { boardId: board._id });
+
+        chai.assert.equal(true, Boards.findOne({ _id: board._id }).isPrivate);
+      });
+      it('should make private a private board when the user is logged and is owner', function () {
+        const board = Factory.create('board', { isPrivate: true });
+        makePrivate._execute({ userId: board.userId }, { boardId: board._id });
+
+        chai.assert.equal(true, Boards.findOne({ _id: board._id }).isPrivate);
       });
     });
   });
