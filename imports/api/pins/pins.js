@@ -23,12 +23,10 @@ Pins.schema = new SimpleSchema({
     max: 10,
     unique: true,
   },
-
   imgUrl: {
     type: String,
     regEx: SimpleSchema.RegEx.Url,
   },
-
   createdAt: {
     type: Date,
   },
