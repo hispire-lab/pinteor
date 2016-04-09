@@ -6,6 +6,7 @@ import { Factory } from 'meteor/dburles:factory';
 import { chai } from 'meteor/practicalmeteor:chai';
 import { Random } from 'meteor/random';
 import faker from 'faker';
+import { Pins } from '../pins/pins.js';
 import { Boards } from './boards.js';
 import { insert, makePrivate } from './methods.js';
 
@@ -16,12 +17,23 @@ import { insert, makePrivate } from './methods.js';
  * like this is either a good choice because that code will be deployed on
  * production, could be a nice idea to move the definition of factories to is
  * own file in order to be loaded just for testing purposes.
+ *
+ * FIXME:
+ * seems like factories creates object without passing the schema.
  */
 Factory.define('board', Boards, {
   name: 'board A',
   description: faker.lorem.sentence(),
   createdAt: new Date(),
   userId: Random.id(),
+  isPrivate: false,
+});
+
+Factory.define('pin', Pins, {
+  title: faker.name.title(),
+  imgUrl: faker.image.imageUrl(),
+  createdAt: new Date(),
+  boardId: Random.id(),
   isPrivate: false,
 });
 
@@ -69,6 +81,7 @@ if (Meteor.isServer) {
       });
       it('should not make private a board when the user is not logged', function () {
         const boardId = Factory.create('board')._id;
+
         chai.assert.throws(() => {
           makePrivate._execute({}, { boardId });
         }, Meteor.Error, /Must be logged in to make private a board./);
@@ -77,6 +90,7 @@ if (Meteor.isServer) {
         const boardId = Factory.create('board')._id;
         // this user id is different to the userId created by the factory.
         const userId = Random.id();
+
         chai.assert.throws(() => {
           makePrivate._execute({ userId }, { boardId });
         }, Meteor.Error, /Cannot make private a board that is not yours./);
@@ -92,6 +106,14 @@ if (Meteor.isServer) {
         makePrivate._execute({ userId: board.userId }, { boardId: board._id });
 
         chai.assert.equal(true, Boards.findOne({ _id: board._id }).isPrivate);
+      });
+      it('should make private all pins when make private a public board', function () {
+        const board = Factory.create('board');
+        const pin = Factory.create('pin', { boardId: board._id });
+
+        makePrivate._execute({ userId: board.userId }, { boardId: board._id });
+
+        chai.assert.equal(true, Pins.findOne({ _id: pin._id }).isPrivate);
       });
     });
   });

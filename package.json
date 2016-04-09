@@ -4,7 +4,8 @@
   "scripts": {
     "start": "meteor run",
     "lint": "eslint .",
-    "pretest": "npm run lint --silent"
+    "pretest": "npm run lint --silent",
+    "test-watch": "meteor test --driver-package practicalmeteor:mocha --port 3100"
   },
   "eslintConfig": {
     "plugins": [

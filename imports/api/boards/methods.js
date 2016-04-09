@@ -52,7 +52,10 @@ const insert = new ValidatedMethod({
 });
 /*
  * TODO:
- * Attach method to a namespace, like Boards.methods.insert
+ * Attach method to a namespace, like Boards.methods.makePrivate
+ *
+ * this method could be renamed to setPrivate, it will take a param to make
+ * the board either public or private.
  */
 const makePrivate = new ValidatedMethod({
   // The name of the method, sent over the wire. Same as the key provided
@@ -82,7 +85,6 @@ const makePrivate = new ValidatedMethod({
         'Must be logged in to make private a board.'
       );
     }
-
     /*
      * TODO:
      * maybe should check if not exists a board with the given id.

@@ -41,6 +41,7 @@ if (Meteor.isServer) {
       it('should insert a pin in a board when the user is logged in', function () {
         const userId = Random.id();
         const board = Factory.create('board', { userId });
+
         const pinId = insert._execute({ userId }, {
           boardId: board._id,
           title: 'pin A',
@@ -55,6 +56,7 @@ if (Meteor.isServer) {
       });
       it('should not insert a pin in a board when the user is not logged in', function () {
         const board = Factory.create('board');
+
         chai.assert.throws(() => {
           insert._execute({}, {
             boardId: board._id,
@@ -64,9 +66,7 @@ if (Meteor.isServer) {
         }, Meteor.Error, /Cannot add a pin to a board that is not yours./);
       });
       it('should create new date if no date exists', function () {
-        const pin = Factory.create('pin', {
-          createdAt: undefined,
-        });
+        const pin = Factory.create('pin', { createdAt: undefined });
 
         chai.assert.typeOf(pin.createdAt, 'date');
       });

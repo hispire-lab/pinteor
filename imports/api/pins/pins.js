@@ -39,6 +39,10 @@ Pins.schema = new SimpleSchema({
     type: String,
     regEx: SimpleSchema.RegEx.Id,
   },
+  isPrivate: {
+    type: Boolean,
+    defaultValue: false,
+  },
 });
 
 Pins.attachSchema(Pins.schema);

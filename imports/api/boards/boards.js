@@ -1,11 +1,17 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import isPrivateDenormalizer from './isPrivateDenormalizer.js';
 
 class BoardsCollection extends Mongo.Collection {
   insert(doc, callback) {
     const board = doc;
     board.createdAt = board.createdAt || new Date();
     const result = super.insert(board, callback);
+    return result;
+  }
+  update(selector, modifier) {
+    const result = super.update(selector, modifier);
+    isPrivateDenormalizer.afterUpdateBoard(selector, modifier);
     return result;
   }
 }
