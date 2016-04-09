@@ -47,6 +47,7 @@ const insert = new ValidatedMethod({
       boardId,
       title,
       imgUrl,
+      isPrivate: board.isPrivate,
     };
     return Pins.insert(newPin);
   },

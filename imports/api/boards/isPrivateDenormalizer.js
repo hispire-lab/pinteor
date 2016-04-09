@@ -9,7 +9,7 @@ const isPrivateDenormalizer = {
   },
 
   afterUpdateBoard(selector, modifier) {
-    // We only support very limited operations on todos
+    // We only support very limited operations on boards
     check(modifier, { $set: Object });
     // We can only deal with $set modifiers, but that's all we do in this app
     if (R.has('isPrivate', modifier.$set)) {

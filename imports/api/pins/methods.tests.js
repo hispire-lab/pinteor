@@ -19,9 +19,11 @@ import { Boards } from '../boards/boards.js';
  * own file in order to be loaded just for testing purposes.
  */
 Factory.define('board', Boards, {
-  _id: Random.id(),
   name: 'board A',
+  description: faker.lorem.sentence(),
+  createdAt: new Date(),
   userId: Random.id(),
+  isPrivate: false,
 });
 
 Factory.define('pin', Pins, {
@@ -66,17 +68,59 @@ if (Meteor.isServer) {
         }, Meteor.Error, /Cannot add a pin to a board that is not yours./);
       });
       it('should create new date if no date exists', function () {
-        const pin = Factory.create('pin', { createdAt: undefined });
+        const userId = Random.id();
+        const board = Factory.create('board', { userId });
 
-        chai.assert.typeOf(pin.createdAt, 'date');
+        const pinId = insert._execute({ userId }, {
+          boardId: board._id,
+          title: 'pin A',
+          imgUrl: faker.image.imageUrl(),
+        });
+
+        chai.assert.typeOf(Pins.findOne({ _id: pinId }).createdAt, 'date');
       });
-      it('should not create new date if date exists', function () {
-        const expectedDate = new Date();
-        const actualDate = Factory.create('pin', {
-          createdAt: expectedDate,
-        }).createdAt;
+      it('should make private a pin if his board is private', function () {
+        const userId = Random.id();
+        const board = Factory.create('board', { userId, isPrivate: true });
 
-        chai.assert.equal(actualDate.getTime(), expectedDate.getTime());
+        const pinId = insert._execute({ userId }, {
+          boardId: board._id,
+          title: 'pin A',
+          imgUrl: faker.image.imageUrl(),
+        });
+
+        chai.assert.equal(true, Pins.findOne({ _id: pinId }).isPrivate);
+      });
+      it('should make public a pin if his board is public', function () {
+        const userId = Random.id();
+        const board = Factory.create('board', { userId, isPrivate: false });
+
+        const pinId = insert._execute({ userId }, {
+          boardId: board._id,
+          title: 'pin A',
+          imgUrl: faker.image.imageUrl(),
+        });
+
+        chai.assert.equal(false, Pins.findOne({ _id: pinId }).isPrivate);
+      });
+      /*
+       * this test should be moved to the update method, only makes sense
+       * to test that createdAt date not changes when we update a pin
+       */
+      it.skip('should not create new date if date exists', function () {
+        const userId = Random.id();
+        const board = Factory.create('board', { userId });
+        const pin = Factory.create('pin', { boardId: board._id });
+        const expectedDate = pin.createdAt;
+
+        const pinId = insert._execute({ userId }, {
+          boardId: board._id,
+          title: 'pin A',
+          imgUrl: faker.image.imageUrl(),
+          createdAt: expectedDate - 1000,
+        });
+
+        chai.assert.equal(Pins.findOne({ _id: pinId }).createdAt.getTime(), expectedDate.getTime());
       });
     });
   });
