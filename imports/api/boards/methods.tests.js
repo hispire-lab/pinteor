@@ -8,7 +8,7 @@ import { Random } from 'meteor/random';
 import faker from 'faker';
 import { Pins } from '../pins/pins.js';
 import { Boards } from './boards.js';
-import { insert, makePrivate } from './methods.js';
+import { insert, setPrivate } from './methods.js';
 
 /*
  * FIXME:
@@ -75,7 +75,7 @@ if (Meteor.isServer) {
         chai.assert.equal(actualDate.getTime(), expectedDate.getTime());
       });
     });
-    describe('Boards.methods.makePrivate', function () {
+    describe('Boards.methods.setPrivate', function () {
       beforeEach(function () {
         resetDatabase();
       });
@@ -83,7 +83,7 @@ if (Meteor.isServer) {
         const boardId = Factory.create('board')._id;
 
         chai.assert.throws(() => {
-          makePrivate._execute({}, { boardId });
+          setPrivate._execute({}, { isPrivate: true, boardId });
         }, Meteor.Error, /Must be logged in to make private a board./);
       });
       it('should not make private a board when the user is not owner', function () {
@@ -92,18 +92,18 @@ if (Meteor.isServer) {
         const userId = Random.id();
 
         chai.assert.throws(() => {
-          makePrivate._execute({ userId }, { boardId });
+          setPrivate._execute({ userId }, { isPrivate: true, boardId });
         }, Meteor.Error, /Cannot make private a board that is not yours./);
       });
       it('should make private a public board when the user is logged and is owner', function () {
         const board = Factory.create('board');
-        makePrivate._execute({ userId: board.userId }, { boardId: board._id });
+        setPrivate._execute({ userId: board.userId }, { isPrivate: true, boardId: board._id });
 
         chai.assert.equal(true, Boards.findOne({ _id: board._id }).isPrivate);
       });
       it('should make private a private board when the user is logged and is owner', function () {
         const board = Factory.create('board', { isPrivate: true });
-        makePrivate._execute({ userId: board.userId }, { boardId: board._id });
+        setPrivate._execute({ userId: board.userId }, { isPrivate: true, boardId: board._id });
 
         chai.assert.equal(true, Boards.findOne({ _id: board._id }).isPrivate);
       });
@@ -111,9 +111,17 @@ if (Meteor.isServer) {
         const board = Factory.create('board');
         const pin = Factory.create('pin', { boardId: board._id });
 
-        makePrivate._execute({ userId: board.userId }, { boardId: board._id });
+        setPrivate._execute({ userId: board.userId }, { isPrivate: true, boardId: board._id });
 
         chai.assert.equal(true, Pins.findOne({ _id: pin._id }).isPrivate);
+      });
+      it('should make public all pins when make public a private board', function () {
+        const board = Factory.create('board', { isPrivate: true });
+        const pin = Factory.create('pin', { boardId: board._id, isPrivate: true });
+
+        setPrivate._execute({ userId: board.userId }, { isPrivate: false, boardId: board._id });
+
+        chai.assert.equal(false, Pins.findOne({ _id: pin._id }).isPrivate);
       });
     });
   });

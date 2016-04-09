@@ -57,10 +57,10 @@ const insert = new ValidatedMethod({
  * this method could be renamed to setPrivate, it will take a param to make
  * the board either public or private.
  */
-const makePrivate = new ValidatedMethod({
+const setPrivate = new ValidatedMethod({
   // The name of the method, sent over the wire. Same as the key provided
   // when calling Meteor.methods
-  name: 'Boards.methods.makePrivate',
+  name: 'Boards.methods.setPrivate',
   // Validation function for the arguments. Only keyword arguments are accepted,
   // so the arguments are an object rather than an array. The SimpleSchema validator
   // throws a ValidationError from the mdg:validation-error package if the args don't
@@ -70,13 +70,16 @@ const makePrivate = new ValidatedMethod({
   // By defining them in the Method, we do client and server-side
   // validation in one place.
   validate: new SimpleSchema({
+    isPrivate: {
+      type: Boolean,
+    },
     boardId: {
       type: String,
     },
   }).validator(),
   // This is the body of the method. Use ES2015 object destructuring to get
   // the keyword arguments
-  run({ boardId }) {
+  run({ isPrivate, boardId }) {
     // `this` is the same method invocation object you normally get inside
     // Meteor.methods
     if (!this.userId) {
@@ -98,11 +101,12 @@ const makePrivate = new ValidatedMethod({
       );
     }
 
-    // make board private just in case it is not.
-    if (!board.isPrivate) {
-      Boards.update({ _id: boardId }, { $set: { isPrivate: true } });
+    // only update board.isPrivate if it is different than isPrivate param,
+    // this let us avoid an uneccesary query.
+    if (board.isPrivate !== isPrivate) {
+      Boards.update({ _id: boardId }, { $set: { isPrivate } });
     }
   },
 });
 
-export { insert, makePrivate };
+export { insert, setPrivate };
