@@ -8,7 +8,7 @@ import { Random } from 'meteor/random';
 import faker from 'faker';
 import { Pins } from './pins.js';
 import { Boards } from '../boards/boards.js';
-import { insert, setPinData } from './methods.js';
+import { insert, setPinData, move } from './methods.js';
 
 /*
  * FIXME:
@@ -166,6 +166,35 @@ if (Meteor.isServer) {
         const pin = Pins.findOne({ _id: pinId });
         chai.assert.equal(fieldsToSet.title, pin.title);
         chai.assert.equal(fieldsToSet.imgUrl, pin.imgUrl);
+      });
+    });
+    describe('Pins.methods.move', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      /*
+       * TODO:
+       * write tests for erros throwed by Pins.methods.move
+       */
+      it('should move a pin to another board and set privacy equal to new board', function () {
+        const userId = Random.id();
+        const fromBoard = Factory.create('board', {
+          userId,
+          name: 'from board',
+          isPrivate: false,
+        });
+        const toBoard = Factory.create('board', {
+          userId,
+          name: 'to board',
+          isPrivate: true,
+        });
+        const pinId = Factory.create('pin', { boardId: fromBoard._id })._id;
+
+        move._execute({ userId }, { pinId, boardId: toBoard._id });
+
+        const movedPin = Pins.findOne({ _id: pinId });
+        chai.assert.equal(toBoard._id, movedPin.boardId);
+        chai.assert.equal(toBoard.isPrivate, movedPin.isPrivate);
       });
     });
   });

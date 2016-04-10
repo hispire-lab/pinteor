@@ -1,6 +1,7 @@
 import { R } from 'meteor/ramda:ramda';
 import { check } from 'meteor/check';
 import { Pins } from '../pins/pins.js';
+import { Boards } from './boards.js';
 
 const isPrivateDenormalizer = {
 
@@ -20,6 +21,17 @@ const isPrivateDenormalizer = {
           this._updatePin(pin._id, modifier.$set.isPrivate);
         });
       }
+    }
+  },
+
+  afterUpdatePin(selector, modifier) {
+    // We only support very limited operations on boards
+    check(modifier, { $set: Object });
+      // We can only deal with $set modifiers, but that's all we do in this app
+    if (R.has('boardId', modifier.$set)) {
+      const board = Boards.findOne({ _id: modifier.$set.boardId });
+      const pin = Pins.findOne({ _id: selector._id }, { fields: { _id: 1 } });
+      this._updatePin(pin._id, board.isPrivate);
     }
   },
 

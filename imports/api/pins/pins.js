@@ -1,12 +1,18 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Boards } from '../boards/boards.js';
+import isPrivateDenormalizer from '../boards/isPrivateDenormalizer.js';
 
 class PinsCollection extends Mongo.Collection {
   insert(doc, callback) {
     const pin = doc;
     pin.createdAt = pin.createdAt || new Date();
     const result = super.insert(pin, callback);
+    return result;
+  }
+  update(selector, modifier) {
+    const result = super.update(selector, modifier);
+    isPrivateDenormalizer.afterUpdatePin(selector, modifier);
     return result;
   }
 }
