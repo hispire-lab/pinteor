@@ -7,8 +7,8 @@ import { chai } from 'meteor/practicalmeteor:chai';
 import { Random } from 'meteor/random';
 import faker from 'faker';
 import { Pins } from './pins.js';
-import { insert } from './methods.js';
 import { Boards } from '../boards/boards.js';
+import { insert, setPinData } from './methods.js';
 
 /*
  * FIXME:
@@ -121,6 +121,51 @@ if (Meteor.isServer) {
         });
 
         chai.assert.equal(Pins.findOne({ _id: pinId }).createdAt.getTime(), expectedDate.getTime());
+      });
+    });
+    describe('Pins.methods.setPinData', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      it('should not be able to edit pin data if user is not logged in', function () {
+        const board = Factory.create('board');
+        const pinId = Factory.create('pin', { boardId: board._id })._id;
+        const fieldsToSet = {
+          title: 'new title',
+          imgUrl: faker.image.imageUrl(),
+        };
+
+        chai.assert.throws(() => {
+          setPinData._execute({}, { pinId, fieldsToSet });
+        }, Meteor.Error, /Must be logged in to edit pin data./);
+      });
+      it('should not be able to set pin data if user not owns pin', function () {
+        const userId = Random.id();
+        const board = Factory.create('board');
+        const pinId = Factory.create('pin', { boardId: board._id })._id;
+        const fieldsToSet = {
+          title: 'new title',
+          imgUrl: faker.image.imageUrl(),
+        };
+
+        chai.assert.throws(() => {
+          setPinData._execute({ userId }, { pinId, fieldsToSet });
+        }, Meteor.Error, /Cannot edit a pin that is not yours./);
+      });
+      it('should be able to edit pin data if user owns the pin', function () {
+        const userId = Random.id();
+        const board = Factory.create('board', { userId });
+        const pinId = Factory.create('pin', { boardId: board._id })._id;
+        const fieldsToSet = {
+          title: 'new title',
+          imgUrl: faker.image.imageUrl(),
+        };
+
+        setPinData._execute({ userId }, { pinId, fieldsToSet });
+
+        const pin = Pins.findOne({ _id: pinId });
+        chai.assert.equal(fieldsToSet.title, pin.title);
+        chai.assert.equal(fieldsToSet.imgUrl, pin.imgUrl);
       });
     });
   });
