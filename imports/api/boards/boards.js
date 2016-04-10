@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import isPrivateDenormalizer from './isPrivateDenormalizer.js';
+import { Pins } from '../pins/pins.js';
 
 class BoardsCollection extends Mongo.Collection {
   insert(doc, callback) {
@@ -13,6 +14,10 @@ class BoardsCollection extends Mongo.Collection {
     const result = super.update(selector, modifier);
     isPrivateDenormalizer.afterUpdateBoard(selector, modifier);
     return result;
+  }
+  remove(selector, callback) {
+    Pins.remove({ boardId: selector._id });
+    return super.remove(selector, callback);
   }
 }
 

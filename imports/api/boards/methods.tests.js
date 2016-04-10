@@ -8,7 +8,7 @@ import { Random } from 'meteor/random';
 import faker from 'faker';
 import { Pins } from '../pins/pins.js';
 import { Boards } from './boards.js';
-import { insert, setPrivate } from './methods.js';
+import { insert, setPrivate, remove } from './methods.js';
 
 /*
  * FIXME:
@@ -122,6 +122,45 @@ if (Meteor.isServer) {
         setPrivate._execute({ userId: board.userId }, { isPrivate: false, boardId: board._id });
 
         chai.assert.equal(false, Pins.findOne({ _id: pin._id }).isPrivate);
+      });
+    });
+    describe('Boards.methods.remove', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      it('should not be able to remove a board when the user is not logged in', function () {
+        const boardId = Factory.create('board')._id;
+
+        chai.assert.throws(() => {
+          remove._execute({}, { boardId });
+        }, Meteor.Error, /Must be logged in to remove a board./);
+      });
+      it('should not be able to remove a board when the user is not owner', function () {
+        const userId = Random.id();
+        const boardId = Factory.create('board')._id;
+
+        chai.assert.throws(() => {
+          remove._execute({ userId }, { boardId });
+        }, Meteor.Error, /Cannot remove a board that is not yours./);
+      });
+      it('should be able to remove a board when the user is owner', function () {
+        const userId = Random.id();
+        const boardId = Factory.create('board', { userId })._id;
+
+        remove._execute({ userId }, { boardId });
+
+        chai.assert.isUndefined(Boards.findOne({ _id: boardId }));
+      });
+      it('should remove pins inside board when remove a board', function () {
+        const userId = Random.id();
+        const boardId = Factory.create('board', { userId })._id;
+        const pinId1 = Factory.create('pin', { title: 'pin 1', boardId })._id;
+        const pinId2 = Factory.create('pin', { title: 'pin 2', boardId })._id;
+
+        remove._execute({ userId }, { boardId });
+
+        chai.assert.isUndefined(Pins.findOne({ _id: pinId1 }));
+        chai.assert.isUndefined(Pins.findOne({ _id: pinId2 }));
       });
     });
   });
