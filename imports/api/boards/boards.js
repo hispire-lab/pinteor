@@ -44,4 +44,15 @@ Boards.schema = new SimpleSchema({
 
 Boards.attachSchema(Boards.schema);
 
+Boards.helpers({
+
+  /*
+   * only the user who created a board can edit it
+   */
+  editableBy(userId) {
+    return this.userId === userId;
+  },
+
+});
+
 export { Boards };

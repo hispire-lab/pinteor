@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Boards } from '../boards/boards.js';
 
 class PinsCollection extends Mongo.Collection {
   insert(doc, callback) {
@@ -41,10 +42,34 @@ Pins.schema = new SimpleSchema({
   },
   isPrivate: {
     type: Boolean,
+    /*
+     * FIXME:
+     * have sense to remove the default value for isPrivate in pins, when we insert
+     * a new pin isPrivate is setted by the board. If a remove this defaultValue
+     * the Pin.methodsw tests not appears in the reporter.
+     */
     defaultValue: false,
   },
 });
 
 Pins.attachSchema(Pins.schema);
+
+Pins.helpers({
+  /*
+   * returns the board in which a pin lives in
+   */
+  board() {
+    return Boards.findOne({ _id: this.boardId });
+  },
+
+  /*
+   * a pin is editable by a given user if the user can edit
+   * the board in which the pin lives in
+   */
+  editableBy(userId) {
+    return this.board().editableBy(userId);
+  },
+
+});
 
 export { Pins };
