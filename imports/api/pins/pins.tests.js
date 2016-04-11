@@ -18,7 +18,6 @@ Factory.define('board', Boards, {
 });
 
 Factory.define('pin', Pins, {
-  title: 'pin A',
   imgUrl: faker.image.imageUrl(),
   createdAt: new Date(),
   boardId: Random.id(),

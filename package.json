@@ -22,7 +22,8 @@
     "growl": "^1.9.2",
     "jade": "^1.11.0",
     "meteor-node-stubs": "~0.2.0",
-    "mocha": "^2.4.5"
+    "mocha": "^2.4.5",
+    "uuid": "^2.0.1"
   },
   "devDependencies": {
     "faker": "^3.1.0"

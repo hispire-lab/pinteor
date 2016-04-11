@@ -30,7 +30,6 @@ Factory.define('board', Boards, {
 });
 
 Factory.define('pin', Pins, {
-  title: faker.name.title(),
   imgUrl: faker.image.imageUrl(),
   createdAt: new Date(),
   boardId: Random.id(),
@@ -75,6 +74,12 @@ if (Meteor.isServer) {
         chai.assert.equal(actualDate.getTime(), expectedDate.getTime());
       });
     });
+    /*
+     * TODO:
+     * a call to setPrivate will make a query to change the privacy of a board if
+     * the new privacy is different than the current one, will nice if we can test
+     * when the query actually happens or not, use a spy to test that thing.
+     */
     describe('Boards.methods.setPrivate', function () {
       beforeEach(function () {
         resetDatabase();
@@ -154,8 +159,8 @@ if (Meteor.isServer) {
       it('should remove pins inside board when remove a board', function () {
         const userId = Random.id();
         const boardId = Factory.create('board', { userId })._id;
-        const pinId1 = Factory.create('pin', { title: 'pin 1', boardId })._id;
-        const pinId2 = Factory.create('pin', { title: 'pin 2', boardId })._id;
+        const pinId1 = Factory.create('pin', { boardId })._id;
+        const pinId2 = Factory.create('pin', { boardId })._id;
 
         remove._execute({ userId }, { boardId });
 

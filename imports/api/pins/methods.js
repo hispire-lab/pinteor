@@ -21,11 +21,12 @@ const insert = new ValidatedMethod({
   // By defining them in the Method, we do client and server-side
   // validation in one place.
   validate: new SimpleSchema({
-    title: {
-      type: String,
-    },
     imgUrl: {
       type: String,
+    },
+    description: {
+      type: String,
+      optional: true,
     },
     boardId: {
       type: String,
@@ -33,7 +34,14 @@ const insert = new ValidatedMethod({
   }).validator(),
   // This is the body of the method. Use ES2015 object destructuring to get
   // the keyword arguments
-  run({ boardId, title, imgUrl }) {
+  run({ boardId, imgUrl, description }) {
+    if (!this.userId) {
+      throw new Meteor.Error(
+        'Pins.methods.move.not-logged-in',
+        'Must be logged in to insert a pin.'
+      );
+    }
+
     const board = Boards.findOne({ _id: boardId });
     // `this` is the same method invocation object you normally get inside
     // Meteor.methods
@@ -45,8 +53,8 @@ const insert = new ValidatedMethod({
     }
     const newPin = {
       boardId,
-      title,
       imgUrl,
+      description,
       isPrivate: board.isPrivate,
     };
     return Pins.insert(newPin);
@@ -55,7 +63,7 @@ const insert = new ValidatedMethod({
 
 /*
  * TODO:
- * Attach method to a namespace, like Pins.methods.insert
+ * Attach method to a namespace, like Pins.methods.setPinData
  */
 const setPinData = new ValidatedMethod({
   // The name of the method, sent over the wire. Same as the key provided
@@ -73,10 +81,6 @@ const setPinData = new ValidatedMethod({
     pinId: {
       type: String,
       regEx: SimpleSchema.RegEx.Id,
-    },
-    // nested schema rules should be sourrounded by commas
-    'fieldsToSet.title': {
-      type: String,
     },
     // nested schema rules should be sourrounded by commas
     'fieldsToSet.imgUrl': {
@@ -108,7 +112,7 @@ const setPinData = new ValidatedMethod({
 
 /*
  * TODO:
- * Attach method to a namespace, like Pins.methods.insert
+ * Attach method to a namespace, like Pins.methods.move
  */
 const move = new ValidatedMethod({
   // The name of the method, sent over the wire. Same as the key provided

@@ -2,11 +2,13 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Boards } from '../boards/boards.js';
 import isPrivateDenormalizer from '../boards/isPrivateDenormalizer.js';
+import uuid from 'uuid';
 
 class PinsCollection extends Mongo.Collection {
   insert(doc, callback) {
     const pin = doc;
     pin.createdAt = pin.createdAt || new Date();
+    pin.title = pin.title || uuid.v4();
     const result = super.insert(pin, callback);
     return result;
   }
@@ -25,10 +27,11 @@ const Pins = new PinsCollection('Pins');
  */
 Pins.schema = new SimpleSchema({
   title: {
+    /*
+     * FIXME:
+     * add regex for uuid
+     */
     type: String,
-    min: 3,
-    max: 10,
-    unique: true,
   },
   imgUrl: {
     type: String,

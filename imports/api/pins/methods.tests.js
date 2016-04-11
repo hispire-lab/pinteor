@@ -27,7 +27,6 @@ Factory.define('board', Boards, {
 });
 
 Factory.define('pin', Pins, {
-  title: 'pin A',
   imgUrl: faker.image.imageUrl(),
   createdAt: new Date(),
   boardId: Random.id(),
@@ -46,7 +45,6 @@ if (Meteor.isServer) {
 
         const pinId = insert._execute({ userId }, {
           boardId: board._id,
-          title: 'pin A',
           imgUrl: faker.image.imageUrl(),
         });
         /*
@@ -62,7 +60,17 @@ if (Meteor.isServer) {
         chai.assert.throws(() => {
           insert._execute({}, {
             boardId: board._id,
-            title: 'pin A',
+            imgUrl: faker.image.imageUrl(),
+          });
+        }, Meteor.Error, /Must be logged in to insert a pin./);
+      });
+      it('should not insert a pin in a board when the user is not owner', function () {
+        const userId = Random.id();
+        const board = Factory.create('board');
+
+        chai.assert.throws(() => {
+          insert._execute({ userId }, {
+            boardId: board._id,
             imgUrl: faker.image.imageUrl(),
           });
         }, Meteor.Error, /Cannot add a pin to a board that is not yours./);
@@ -73,7 +81,6 @@ if (Meteor.isServer) {
 
         const pinId = insert._execute({ userId }, {
           boardId: board._id,
-          title: 'pin A',
           imgUrl: faker.image.imageUrl(),
         });
 
@@ -85,7 +92,6 @@ if (Meteor.isServer) {
 
         const pinId = insert._execute({ userId }, {
           boardId: board._id,
-          title: 'pin A',
           imgUrl: faker.image.imageUrl(),
         });
 
@@ -97,7 +103,6 @@ if (Meteor.isServer) {
 
         const pinId = insert._execute({ userId }, {
           boardId: board._id,
-          title: 'pin A',
           imgUrl: faker.image.imageUrl(),
         });
 
@@ -115,7 +120,6 @@ if (Meteor.isServer) {
 
         const pinId = insert._execute({ userId }, {
           boardId: board._id,
-          title: 'pin A',
           imgUrl: faker.image.imageUrl(),
           createdAt: expectedDate - 1000,
         });
@@ -131,7 +135,6 @@ if (Meteor.isServer) {
         const board = Factory.create('board');
         const pinId = Factory.create('pin', { boardId: board._id })._id;
         const fieldsToSet = {
-          title: 'new title',
           imgUrl: faker.image.imageUrl(),
         };
 
@@ -144,7 +147,6 @@ if (Meteor.isServer) {
         const board = Factory.create('board');
         const pinId = Factory.create('pin', { boardId: board._id })._id;
         const fieldsToSet = {
-          title: 'new title',
           imgUrl: faker.image.imageUrl(),
         };
 
@@ -157,14 +159,12 @@ if (Meteor.isServer) {
         const board = Factory.create('board', { userId });
         const pinId = Factory.create('pin', { boardId: board._id })._id;
         const fieldsToSet = {
-          title: 'new title',
           imgUrl: faker.image.imageUrl(),
         };
 
         setPinData._execute({ userId }, { pinId, fieldsToSet });
 
         const pin = Pins.findOne({ _id: pinId });
-        chai.assert.equal(fieldsToSet.title, pin.title);
         chai.assert.equal(fieldsToSet.imgUrl, pin.imgUrl);
       });
     });
