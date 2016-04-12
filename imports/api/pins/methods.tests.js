@@ -8,7 +8,7 @@ import { Random } from 'meteor/random';
 import faker from 'faker';
 import { Pins } from './pins.js';
 import { Boards } from '../boards/boards.js';
-import { insert, setPinData, move } from './methods.js';
+import { insert, setPinData, move, copy } from './methods.js';
 
 /*
  * FIXME:
@@ -195,6 +195,112 @@ if (Meteor.isServer) {
         const movedPin = Pins.findOne({ _id: pinId });
         chai.assert.equal(toBoard._id, movedPin.boardId);
         chai.assert.equal(toBoard.isPrivate, movedPin.isPrivate);
+      });
+    });
+    describe('Pins.methods.copy', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      /*
+       * TODO:
+       * write tests for erros throwed by Pins.methods.copy
+       */
+      it('should not be able to copy a pin if user is not logged in', function () {
+        const userId = Random.id();
+        const fromBoard = Factory.create('board', {
+          userId,
+          name: 'from board',
+          isPrivate: true,
+        });
+        const toBoard = Factory.create('board', {
+          userId,
+          name: 'to board',
+          isPrivate: false,
+        });
+        const fromPin = Factory.create('pin', { boardId: fromBoard._id });
+
+        chai.assert.throws(() => {
+          copy._execute({}, { pinId: fromPin._id, boardId: toBoard._id });
+        }, Meteor.Error, /Must be logged in to copy a pin./);
+      });
+      it('should not be able to copy a pin if user is not owner', function () {
+        const userId = Random.id();
+        const fromBoard = Factory.create('board', {
+          userId: Random.id(),
+          name: 'from board',
+          isPrivate: true,
+        });
+        const toBoard = Factory.create('board', {
+          userId,
+          name: 'to board',
+          isPrivate: false,
+        });
+        const fromPin = Factory.create('pin', { boardId: fromBoard._id });
+
+        chai.assert.throws(() => {
+          copy._execute({ userId }, { pinId: fromPin._id, boardId: toBoard._id });
+        }, Meteor.Error, /Cannot copy a pin that is not yours./);
+      });
+      it('should not be able to copy a pin to a board that the user not owns', function () {
+        const userId = Random.id();
+        const fromBoard = Factory.create('board', {
+          userId,
+          name: 'from board',
+          isPrivate: true,
+        });
+        const toBoard = Factory.create('board', {
+          userId: Random.id(),
+          name: 'to board',
+          isPrivate: false,
+        });
+        const fromPin = Factory.create('pin', { boardId: fromBoard._id });
+
+        chai.assert.throws(() => {
+          copy._execute({ userId }, { pinId: fromPin._id, boardId: toBoard._id });
+        }, Meteor.Error, /Cannot copy a pin to a board that is not yours./);
+      });
+      it('should copy a pin to another board', function () {
+        const userId = Random.id();
+        const fromBoard = Factory.create('board', {
+          userId,
+          name: 'from board',
+          isPrivate: true,
+        });
+        const toBoard = Factory.create('board', {
+          userId,
+          name: 'to board',
+          isPrivate: false,
+        });
+        const fromPin = Factory.create('pin', { boardId: fromBoard._id });
+
+        const copiedPinId = copy._execute({ userId }, { pinId: fromPin._id, boardId: toBoard._id });
+
+        const copiedPin = Pins.findOne({ _id: copiedPinId });
+        chai.assert.notEqual(fromPin._id, copiedPin._id);
+        chai.assert.equal(fromPin.imgUrl, copiedPin.imgUrl);
+        chai.assert.equal(fromPin.description, copiedPin.description);
+        chai.assert.equal(toBoard.isPrivate, copiedPin.isPrivate);
+      });
+      it('should copy a pin to same board', function () {
+        const userId = Random.id();
+        const fromBoard = Factory.create('board', {
+          userId,
+          name: 'from board',
+          isPrivate: true,
+        });
+        const fromPin = Factory.create('pin', { boardId: fromBoard._id });
+
+        const copiedPinId = copy._execute({ userId }, {
+          pinId: fromPin._id,
+          boardId: fromBoard._id,
+        });
+
+        const copiedPin = Pins.findOne({ _id: copiedPinId });
+        chai.assert.notEqual(fromPin._id, copiedPin._id);
+        chai.assert.equal(fromPin.boardId, copiedPin.boardId);
+        chai.assert.equal(fromPin.imgUrl, copiedPin.imgUrl);
+        chai.assert.equal(fromPin.description, copiedPin.description);
+        chai.assert.equal(fromBoard.isPrivate, copiedPin.isPrivate);
       });
     });
   });

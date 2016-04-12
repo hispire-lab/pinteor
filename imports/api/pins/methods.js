@@ -37,7 +37,7 @@ const insert = new ValidatedMethod({
   run({ boardId, imgUrl, description }) {
     if (!this.userId) {
       throw new Meteor.Error(
-        'Pins.methods.move.not-logged-in',
+        'Pins.methods.insert.not-logged-in',
         'Must be logged in to insert a pin.'
       );
     }
@@ -167,4 +167,66 @@ const move = new ValidatedMethod({
   },
 });
 
-export { insert, setPinData, move };
+/*
+ * TODO:
+ * Attach method to a namespace, like Pins.methods.copy
+ */
+const copy = new ValidatedMethod({
+  // The name of the method, sent over the wire. Same as the key provided
+  // when calling Meteor.methods
+  name: 'Pins.methods.copy',
+  // Validation function for the arguments. Only keyword arguments are accepted,
+  // so the arguments are an object rather than an array. The SimpleSchema validator
+  // throws a ValidationError from the mdg:validation-error package if the args don't
+  // match the schema
+  //
+  // This Method encodes the form validation requirements.
+  // By defining them in the Method, we do client and server-side
+  // validation in one place.
+  validate: new SimpleSchema({
+    pinId: {
+      type: String,
+      regEx: SimpleSchema.RegEx.Id,
+    },
+    boardId: {
+      type: String,
+      regEx: SimpleSchema.RegEx.Id,
+    },
+  }).validator(),
+  // This is the body of the method. Use ES2015 object destructuring to get
+  // the keyword arguments
+  run({ pinId, boardId }) {
+    if (!this.userId) {
+      throw new Meteor.Error(
+        'Pins.methods.copy.not-logged-in',
+        'Must be logged in to copy a pin.'
+      );
+    }
+    // This is complex auth stuff - perhaps denormalizing a userId onto todos
+    // would be correct here?
+    const pin = Pins.findOne({ _id: pinId });
+    if (!pin.editableBy(this.userId)) {
+      throw new Meteor.Error(
+        'Pins.methods.copy.access-denied',
+        'Cannot copy a pin that is not yours.'
+      );
+    }
+
+    const board = Boards.findOne({ _id: boardId });
+    if (!board.editableBy(this.userId)) {
+      throw new Meteor.Error(
+        'Pins.methods.copy.access-denied',
+        'Cannot copy a pin to a board that is not yours.'
+      );
+    }
+
+    return insert._execute({ userId: this.userId }, {
+      boardId,
+      imgUrl: pin.imgUrl,
+      description: pin.description,
+    });
+  },
+});
+
+
+export { insert, setPinData, move, copy };
