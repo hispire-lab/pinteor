@@ -5,7 +5,8 @@
     "start": "meteor run",
     "lint": "eslint .",
     "pretest": "npm run lint --silent",
-    "test-watch": "meteor test --driver-package practicalmeteor:mocha --port 3100"
+    "test-watch": "meteor test --driver-package practicalmeteor:mocha --port 3100",
+    "test-app-watch": "meteor test --full-app --driver-package practicalmeteor:mocha"
   },
   "eslintConfig": {
     "plugins": [
@@ -23,9 +24,11 @@
     "jade": "^1.11.0",
     "meteor-node-stubs": "~0.2.0",
     "mocha": "^2.4.5",
+    "slug": "^0.9.1",
     "uuid": "^2.0.1"
   },
   "devDependencies": {
-    "faker": "^3.1.0"
+    "faker": "^3.1.0",
+    "meteor-node-stubs": "^0.2.3"
   }
 }

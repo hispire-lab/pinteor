@@ -6,10 +6,11 @@ import { Factory } from 'meteor/dburles:factory';
 import { chai } from 'meteor/practicalmeteor:chai';
 import { Random } from 'meteor/random';
 import faker from 'faker';
+import { Users } from '../users/users.js';
 import { Pins } from '../pins/pins.js';
 import { Boards } from './boards.js';
 import { insert, setPrivate, remove } from './methods.js';
-
+import { ValidationError } from 'meteor/mdg:validation-error';
 /*
  * FIXME:
  * is not a good idea to define the factories here, in the sample todo app
@@ -21,6 +22,11 @@ import { insert, setPrivate, remove } from './methods.js';
  * FIXME:
  * seems like factories creates object without passing the schema.
  */
+Factory.define('user', Users, {
+  username: faker.name.firstName(),
+  createdAt: new Date(),
+});
+
 Factory.define('board', Boards, {
   name: 'board A',
   description: faker.lorem.sentence(),
@@ -59,9 +65,7 @@ if (Meteor.isServer) {
         }, Meteor.Error, /Must be logged in to create a board./);
       });
       it('should create new date if no date exists', function () {
-        const board = Factory.create('board', {
-          createdAt: undefined,
-        });
+        const board = Factory.create('board', { createdAt: undefined });
 
         chai.assert.typeOf(board.createdAt, 'date');
       });
@@ -72,6 +76,14 @@ if (Meteor.isServer) {
         }).createdAt;
 
         chai.assert.equal(actualDate.getTime(), expectedDate.getTime());
+      });
+      it('should not create a new board if slug is not unique', function () {
+        const userId = Factory.create('user')._id;
+        Factory.create('board', { name: 'board A', userId });
+
+        chai.assert.throws(() => {
+          insert._execute({ userId }, { name: 'board a' });
+        }, Meteor.Error, /name must be unique./);
       });
     });
     /*

@@ -30,6 +30,8 @@ Pins.schema = new SimpleSchema({
     /*
      * FIXME:
      * add regex for uuid
+     *
+     * we don't need a title for pins, should be renamed to slug
      */
     type: String,
   },

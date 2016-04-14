@@ -201,10 +201,6 @@ if (Meteor.isServer) {
       beforeEach(function () {
         resetDatabase();
       });
-      /*
-       * TODO:
-       * write tests for erros throwed by Pins.methods.copy
-       */
       it('should not be able to copy a pin if user is not logged in', function () {
         const userId = Random.id();
         const fromBoard = Factory.create('board', {
