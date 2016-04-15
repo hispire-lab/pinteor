@@ -1,4 +1,3 @@
-import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import isPrivateDenormalizer from './isPrivateDenormalizer.js';
@@ -84,8 +83,6 @@ Boards.schema = new SimpleSchema({
     defaultValue: false,
   },
 });
-
-const boardCreateForm = Boards.schema.namedContext('boardCreateForm');
 
 Boards.attachSchema(Boards.schema);
 

@@ -10,7 +10,7 @@ import { Users } from '../users/users.js';
 import { Pins } from '../pins/pins.js';
 import { Boards } from './boards.js';
 import { insert, setPrivate, remove } from './methods.js';
-import { ValidationError } from 'meteor/mdg:validation-error';
+
 /*
  * FIXME:
  * is not a good idea to define the factories here, in the sample todo app
@@ -76,6 +76,13 @@ if (Meteor.isServer) {
         }).createdAt;
 
         chai.assert.equal(actualDate.getTime(), expectedDate.getTime());
+      });
+      it('should not create a new board if name is not a string', function () {
+        const userId = Factory.create('user')._id;
+
+        chai.assert.throws(() => {
+          insert._execute({ userId }, { name: {} });
+        }, Meteor.Error, /Name must be a string/);
       });
       it('should not create a new board if slug is not unique', function () {
         const userId = Factory.create('user')._id;

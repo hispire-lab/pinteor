@@ -45,19 +45,32 @@ const insert = new ValidatedMethod({
    * i can't use simple schema here for validation, inside a custom rule of simple schema
    * this.userId is not visible, making impossible to perform the slugs-user checks.
    */
-  validate({ name }) {
-    /*
-     * TODO:
-     * check for param name to be a String, check for param description to be a String
-     * and optional.
-     */
+  validate({ name, description }) {
+    new SimpleSchema({
+      name: {
+        type: String,
+      },
+      description: {
+        type: String,
+        optional: true,
+      },
+    })
+    .validate({
+      name,
+      description,
+    });
+    // unique slug validation
     if (this.userId) {
       const boards = Boards.find({ userId: this.userId, slug: slug(name) });
       const errors = [];
-
       /*
        * FIXME:
        * have to be a better way to check wheter or not a query has empty results.
+       */
+      /*
+       * TODO:
+       * add a custom error to handle this case,
+       * i.e SimpleSchema.messages({wrongPassword: "Wrong password"});
        */
       if (boards.count()) {
         errors.push({
@@ -68,7 +81,6 @@ const insert = new ValidatedMethod({
           },
         });
       }
-
       if (errors.length) {
         throw new ValidationError(errors, 'name must be unique.');
       }
