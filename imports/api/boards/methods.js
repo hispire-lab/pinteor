@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Boards } from './boards.js';
-import { ValidationError } from 'meteor/mdg:validation-error';
 import slug from 'slug';
 
 slug.defaults.mode = 'pretty';
@@ -22,6 +21,26 @@ slug.defaults.modes.pretty = {
 };
 
 /*
+ * custom simple schema validation messages should be in its own file,
+ * and should be loaded on startup.
+ */
+SimpleSchema.messages({ nameUnique: 'name must be unique.' });
+
+/*
+ * a board name is valid if the logged in user has no other boards with the same
+ * slug, so if the user has already a board with name board A and tries to insert
+ * another board with name Board-a it will be rejected cause both slugs are board-a
+ */
+function nameBySlugIsUnique() {
+  const board = Boards.findOne({ userId: this.userId, slug: slug(this.value) });
+  if (board) {
+    return 'nameUnique';
+  }
+  // eslint consistent-return: "error"
+  return true;
+}
+
+/*
  * TODO:
  * Attach method to a namespace, like Boards.methods.insert
  */
@@ -37,54 +56,20 @@ const insert = new ValidatedMethod({
   // This Method encodes the form validation requirements.
   // By defining them in the Method, we do client and server-side
   // validation in one place.
-  /*
-   * a board name is valid if the logged in user has no other boards with the same
-   * slug, so if the user has already a board with name board A and tries to insert
-   * another board with name Board-a it will be rejected cause both slugs are board-a
-   *
-   * i can't use simple schema here for validation, inside a custom rule of simple schema
-   * this.userId is not visible, making impossible to perform the slugs-user checks.
-   */
   validate({ name, description }) {
     new SimpleSchema({
       name: {
         type: String,
+        custom: nameBySlugIsUnique,
       },
       description: {
         type: String,
         optional: true,
       },
     })
-    .validate({
-      name,
-      description,
+    .validate({ name, description }, {
+      extendedCustomContext: { userId: this.userId },
     });
-    // unique slug validation
-    if (this.userId) {
-      const boards = Boards.find({ userId: this.userId, slug: slug(name) });
-      const errors = [];
-      /*
-       * FIXME:
-       * have to be a better way to check wheter or not a query has empty results.
-       */
-      /*
-       * TODO:
-       * add a custom error to handle this case,
-       * i.e SimpleSchema.messages({wrongPassword: "Wrong password"});
-       */
-      if (boards.count()) {
-        errors.push({
-          name: 'name',
-          type: 'notUnique',
-          details: {
-            value: name,
-          },
-        });
-      }
-      if (errors.length) {
-        throw new ValidationError(errors, 'name must be unique.');
-      }
-    }
   },
   // This is the body of the method. Use ES2015 object destructuring to get
   // the keyword arguments

@@ -55,7 +55,7 @@ less@2.5.7
 livedata@1.0.17
 localstorage@1.0.8
 logging@1.0.11
-mdg:validated-method@1.0.2
+mdg:validated-method@1.1.0
 mdg:validation-error@0.5.1
 meteor@1.1.13
 meteor-base@1.0.3
@@ -75,7 +75,7 @@ observe-sequence@1.0.10
 ordered-dict@1.0.6
 practicalmeteor:chai@2.1.0_1
 practicalmeteor:loglevel@1.2.0_2
-practicalmeteor:mocha@2.1.0_8
+practicalmeteor:mocha@2.4.5_1
 practicalmeteor:mocha-core@0.1.4
 practicalmeteor:sinon@1.14.1_2
 promise@0.6.6
