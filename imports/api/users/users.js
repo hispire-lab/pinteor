@@ -2,7 +2,20 @@ import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
-const Users = new Mongo.Collection('Users');
+/*
+class UsersCollection extends Meteor.users {
+  insert(doc, callback) {
+    const user = doc;
+    user.createdAt = user.createdAt || new Date();
+    const result = super.insert(user, callback);
+    return result;
+  }
+}
+*/
+
+// const Users = new UsersCollection('Users');
+
+const Users = Meteor.users;
 
 Users.schema = new SimpleSchema({
   username: {
@@ -29,8 +42,16 @@ Users.schema = new SimpleSchema({
     type: Date,
     optional: true,
   },
+  following: {
+    type: [SimpleSchema.RegEx.Id],
+    optional: true,
+  },
+  followers: {
+    type: [SimpleSchema.RegEx.Id],
+    optional: true,
+  },
 });
 
-Meteor.users.attachSchema(Users.schema);
+Users.attachSchema(Users.schema);
 
 export { Users };
