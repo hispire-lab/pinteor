@@ -1,5 +1,7 @@
+/* eslint new-cap: ["error", {"capIsNewExceptions": ["Match.OneOf"]}] */
+
 import { R } from 'meteor/ramda:ramda';
-import { check } from 'meteor/check';
+import { check, Match } from 'meteor/check';
 import { Pins } from '../pins/pins.js';
 import { Boards } from './boards.js';
 
@@ -25,13 +27,15 @@ const isPrivateDenormalizer = {
   },
 
   afterUpdatePin(selector, modifier) {
-    // We only support very limited operations on boards
-    check(modifier, { $set: Object });
-      // We can only deal with $set modifiers, but that's all we do in this app
-    if (R.has('boardId', modifier.$set)) {
-      const board = Boards.findOne({ _id: modifier.$set.boardId });
-      const pin = Pins.findOne({ _id: selector._id }, { fields: { _id: 1 } });
-      this._updatePin(pin._id, board.isPrivate);
+    // we have two types of modifiers, $set and $addToSet
+    Match.test(modifier, Match.OneOf({ $set: Object }, { $addToSet: String }));
+    // the modifier is $set
+    if (modifier.$set) {
+      if (R.has('boardId', modifier.$set)) {
+        const board = Boards.findOne({ _id: modifier.$set.boardId });
+        const pin = Pins.findOne({ _id: selector._id }, { fields: { _id: 1 } });
+        this._updatePin(pin._id, board.isPrivate);
+      }
     }
   },
 

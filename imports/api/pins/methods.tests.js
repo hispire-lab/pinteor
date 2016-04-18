@@ -8,7 +8,7 @@ import { Random } from 'meteor/random';
 import faker from 'faker';
 import { Pins } from './pins.js';
 import { Boards } from '../boards/boards.js';
-import { insert, setPinData, move, copy } from './methods.js';
+import { insert, setPinData, move, copy, like, unlike } from './methods.js';
 
 /*
  * FIXME:
@@ -297,6 +297,69 @@ if (Meteor.isServer) {
         chai.assert.equal(fromPin.imgUrl, copiedPin.imgUrl);
         chai.assert.equal(fromPin.description, copiedPin.description);
         chai.assert.equal(fromBoard.isPrivate, copiedPin.isPrivate);
+      });
+    });
+    describe('Pins.methods.like', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      it('should not like a pin if user is not logged in', function () {
+        const board = Factory.create('board');
+        const pin = Factory.create('pin', { boardId: board._id });
+
+        chai.assert.throws(() => {
+          like._execute({}, { pinId: pin._id });
+        }, Meteor.Error, /Must be logged in to like a pin./);
+      });
+      it('should not like a a non existing pin', function () {
+        chai.assert.throws(() => {
+          like._execute({ userId: Random.id() }, { pinId: Random.id() });
+        }, Meteor.Error, /Cannot like a non existing pin./);
+      });
+      it('should like a pin.', function () {
+        const board = Factory.create('board');
+        // const pin = Factory.create('pin', { boardId: board._id });
+        const pinId = insert._execute({ userId: board.userId }, {
+          boardId: board._id,
+          imgUrl: faker.image.imageUrl(),
+        });
+        const isTrue = like._execute({ userId: board.userId }, { pinId });
+
+        chai.assert.equal(true, isTrue);
+        chai.assert.equal(
+          Pins.findOne({ _id: pinId, likes: board.userId })._id,
+          pinId
+        );
+      });
+    });
+    describe('Pins.methods.unlike', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      it('should not unlike a pin if user is not logged in', function () {
+        const board = Factory.create('board');
+        const pin = Factory.create('pin', { boardId: board._id });
+
+        chai.assert.throws(() => {
+          unlike._execute({}, { pinId: pin._id });
+        }, Meteor.Error, /Must be logged in to unlike a pin./);
+      });
+      it('should not unlike a a non existing pin', function () {
+        chai.assert.throws(() => {
+          unlike._execute({ userId: Random.id() }, { pinId: Random.id() });
+        }, Meteor.Error, /Cannot unlike a non existing pin./);
+      });
+      it('should unlike a pin.', function () {
+        const board = Factory.create('board');
+        const pinId = insert._execute({ userId: board.userId }, {
+          boardId: board._id,
+          imgUrl: faker.image.imageUrl(),
+        });
+        like._execute({ userId: board.userId }, { pinId });
+
+        const isTrue = unlike._execute({ userId: board.userId }, { pinId });
+        chai.assert.equal(true, isTrue);
+        chai.assert.isUndefined(Pins.findOne({ _id: pinId, likes: board.userId }));
       });
     });
   });

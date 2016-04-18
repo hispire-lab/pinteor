@@ -228,5 +228,94 @@ const copy = new ValidatedMethod({
   },
 });
 
+/*
+ * TODO:
+ * Attach method to a namespace, like Pins.methods.like
+ */
+const like = new ValidatedMethod({
+  // The name of the method, sent over the wire. Same as the key provided
+  // when calling Meteor.methods
+  name: 'Pins.methods.like',
+  // Validation function for the arguments. Only keyword arguments are accepted,
+  // so the arguments are an object rather than an array. The SimpleSchema validator
+  // throws a ValidationError from the mdg:validation-error package if the args don't
+  // match the schema
+  //
+  // This Method encodes the form validation requirements.
+  // By defining them in the Method, we do client and server-side
+  // validation in one place.
+  validate: new SimpleSchema({
+    pinId: {
+      type: String,
+      regEx: SimpleSchema.RegEx.Id,
+    },
+  }).validator(),
+  // This is the body of the method. Use ES2015 object destructuring to get
+  // the keyword arguments
+  run({ pinId }) {
+    if (!this.userId) {
+      throw new Meteor.Error(
+        'Pins.methods.like.not-logged-in',
+        'Must be logged in to like a pin.'
+      );
+    }
+    const pin = Pins.findOne({ _id: pinId });
+    if (!pin) {
+      throw new Meteor.Error(
+        'Pins.methods.like.not-found',
+        'Cannot like a non existing pin.'
+      );
+    }
+    return Pins.update(
+      { _id: pinId },
+      { $addToSet: { likes: this.userId } }
+    );
+  },
+});
 
-export { insert, setPinData, move, copy };
+/*
+ * TODO:
+ * Attach method to a namespace, like Pins.methods.unlike
+ */
+const unlike = new ValidatedMethod({
+  // The name of the method, sent over the wire. Same as the key provided
+  // when calling Meteor.methods
+  name: 'Pins.methods.unlike',
+  // Validation function for the arguments. Only keyword arguments are accepted,
+  // so the arguments are an object rather than an array. The SimpleSchema validator
+  // throws a ValidationError from the mdg:validation-error package if the args don't
+  // match the schema
+  //
+  // This Method encodes the form validation requirements.
+  // By defining them in the Method, we do client and server-side
+  // validation in one place.
+  validate: new SimpleSchema({
+    pinId: {
+      type: String,
+      regEx: SimpleSchema.RegEx.Id,
+    },
+  }).validator(),
+  // This is the body of the method. Use ES2015 object destructuring to get
+  // the keyword arguments
+  run({ pinId }) {
+    if (!this.userId) {
+      throw new Meteor.Error(
+        'Pins.methods.like.not-logged-in',
+        'Must be logged in to unlike a pin.'
+      );
+    }
+    const pin = Pins.findOne({ _id: pinId });
+    if (!pin) {
+      throw new Meteor.Error(
+        'Pins.methods.like.not-found',
+        'Cannot unlike a non existing pin.'
+      );
+    }
+    return Pins.update(
+      { _id: pinId },
+      { $pull: { likes: this.userId } }
+    );
+  },
+});
+
+export { insert, setPinData, move, copy, like, unlike };

@@ -56,10 +56,14 @@ Pins.schema = new SimpleSchema({
     /*
      * FIXME:
      * have sense to remove the default value for isPrivate in pins, when we insert
-     * a new pin isPrivate is setted by the board. If a remove this defaultValue
-     * the Pin.methodsw tests not appears in the reporter.
+     * a new pin isPrivate is setted by the board. If i remove this defaultValue
+     * the Pin.methods tests not appears in the reporter.
      */
     defaultValue: false,
+  },
+  likes: {
+    type: [SimpleSchema.RegEx.Id],
+    optional: true,
   },
 });
 
