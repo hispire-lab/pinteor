@@ -27,10 +27,20 @@ const isPrivateDenormalizer = {
   },
 
   afterUpdatePin(selector, modifier) {
-    // we have two types of modifiers, $set and $addToSet
-    Match.test(modifier, Match.OneOf({ $set: Object }, { $addToSet: String }));
+    // we have three types of modifiers, $set, $addToSet and $pull
+    /*
+     * TODO:
+     * be more restrictive with likes checks, instead of checking for String,
+     * figure out how to check for userIds.
+     * instead of number check for Integer.
+     */
+    check(modifier, Match.OneOf(
+      { $set: Object },
+      { $addToSet: { likes: String } },
+      { $pull: { likes: String } }
+    ));
     // the modifier is $set
-    if (modifier.$set) {
+    if (R.has('$set', modifier)) {
       if (R.has('boardId', modifier.$set)) {
         const board = Boards.findOne({ _id: modifier.$set.boardId });
         const pin = Pins.findOne({ _id: selector._id }, { fields: { _id: 1 } });

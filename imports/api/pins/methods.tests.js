@@ -331,6 +331,43 @@ if (Meteor.isServer) {
           pinId
         );
       });
+      it('should increase likes count when different users likes a pin', function () {
+        const board = Factory.create('board');
+        const pinId = insert._execute({ userId: board.userId }, {
+          boardId: board._id,
+          imgUrl: faker.image.imageUrl(),
+        });
+
+        chai.assert.equal(0, Pins.findOne({ _id: pinId }).likesCount);
+
+        like._execute({ userId: Random.id() }, { pinId });
+        chai.assert.equal(1, Pins.findOne({ _id: pinId }).likesCount);
+
+        like._execute({ userId: Random.id() }, { pinId });
+        chai.assert.equal(2, Pins.findOne({ _id: pinId }).likesCount);
+
+        like._execute({ userId: Random.id() }, { pinId });
+        chai.assert.equal(3, Pins.findOne({ _id: pinId }).likesCount);
+      });
+    });
+    it('should increase likes count just once when same user likes a pin many times', function () {
+      const userId = Random.id();
+      const board = Factory.create('board', { userId });
+      const pinId = insert._execute({ userId }, {
+        boardId: board._id,
+        imgUrl: faker.image.imageUrl(),
+      });
+
+      chai.assert.equal(0, Pins.findOne({ _id: pinId }).likesCount);
+
+      like._execute({ userId }, { pinId });
+      chai.assert.equal(1, Pins.findOne({ _id: pinId }).likesCount);
+
+      like._execute({ userId }, { pinId });
+      chai.assert.equal(1, Pins.findOne({ _id: pinId }).likesCount);
+
+      like._execute({ userId }, { pinId });
+      chai.assert.equal(1, Pins.findOne({ _id: pinId }).likesCount);
     });
     describe('Pins.methods.unlike', function () {
       beforeEach(function () {
@@ -360,6 +397,56 @@ if (Meteor.isServer) {
         const isTrue = unlike._execute({ userId: board.userId }, { pinId });
         chai.assert.equal(true, isTrue);
         chai.assert.isUndefined(Pins.findOne({ _id: pinId, likes: board.userId }));
+      });
+      it('should decrease likes count when different users unlikes a pin', function () {
+        const board = Factory.create('board');
+        const pinId = insert._execute({ userId: board.userId }, {
+          boardId: board._id,
+          imgUrl: faker.image.imageUrl(),
+        });
+
+        const userId1 = Random.id();
+        const userId2 = Random.id();
+        const userId3 = Random.id();
+        like._execute({ userId: userId1 }, { pinId });
+        like._execute({ userId: userId2 }, { pinId });
+        like._execute({ userId: userId3 }, { pinId });
+
+        chai.assert.equal(3, Pins.findOne({ _id: pinId }).likesCount);
+
+        unlike._execute({ userId: userId1 }, { pinId });
+        chai.assert.equal(2, Pins.findOne({ _id: pinId }).likesCount);
+
+        unlike._execute({ userId: userId2 }, { pinId });
+        chai.assert.equal(1, Pins.findOne({ _id: pinId }).likesCount);
+
+        unlike._execute({ userId: userId3 }, { pinId });
+        chai.assert.equal(0, Pins.findOne({ _id: pinId }).likesCount);
+      });
+      it('should decrease likes count just once when same user unlikes a pin many times', function () {
+        const board = Factory.create('board');
+        const pinId = insert._execute({ userId: board.userId }, {
+          boardId: board._id,
+          imgUrl: faker.image.imageUrl(),
+        });
+
+        const userId1 = Random.id();
+        const userId2 = Random.id();
+        const userId3 = Random.id();
+        like._execute({ userId: userId1 }, { pinId });
+        like._execute({ userId: userId2 }, { pinId });
+        like._execute({ userId: userId3 }, { pinId });
+
+        chai.assert.equal(3, Pins.findOne({ _id: pinId }).likesCount);
+
+        unlike._execute({ userId: userId1 }, { pinId });
+        chai.assert.equal(2, Pins.findOne({ _id: pinId }).likesCount);
+
+        unlike._execute({ userId: userId1 }, { pinId });
+        chai.assert.equal(2, Pins.findOne({ _id: pinId }).likesCount);
+
+        unlike._execute({ userId: userId1 }, { pinId });
+        chai.assert.equal(2, Pins.findOne({ _id: pinId }).likesCount);
       });
     });
   });

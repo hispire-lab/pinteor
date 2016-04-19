@@ -252,6 +252,10 @@ const like = new ValidatedMethod({
   }).validator(),
   // This is the body of the method. Use ES2015 object destructuring to get
   // the keyword arguments
+  /*
+   * FIXME:
+   * have no sense to be able to like a private pin
+   */
   run({ pinId }) {
     if (!this.userId) {
       throw new Meteor.Error(
@@ -297,6 +301,10 @@ const unlike = new ValidatedMethod({
   }).validator(),
   // This is the body of the method. Use ES2015 object destructuring to get
   // the keyword arguments
+  /*
+   * FIXME:
+   * have no sense to be able to unlike a private pin
+   */
   run({ pinId }) {
     if (!this.userId) {
       throw new Meteor.Error(

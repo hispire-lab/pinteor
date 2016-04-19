@@ -2,6 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Boards } from '../boards/boards.js';
 import isPrivateDenormalizer from '../boards/isPrivateDenormalizer.js';
+import likesCountDenormalizer from './likesCountDenormalizer.js';
 import uuid from 'uuid';
 
 class PinsCollection extends Mongo.Collection {
@@ -9,12 +10,14 @@ class PinsCollection extends Mongo.Collection {
     const pin = doc;
     pin.createdAt = pin.createdAt || new Date();
     pin.title = pin.title || uuid.v4();
+    pin.likesCount = pin.likesCount || 0;
     const result = super.insert(pin, callback);
     return result;
   }
   update(selector, modifier) {
     const result = super.update(selector, modifier);
     isPrivateDenormalizer.afterUpdatePin(selector, modifier);
+    likesCountDenormalizer.afterUpdatePin(selector, modifier);
     return result;
   }
 }
@@ -65,6 +68,9 @@ Pins.schema = new SimpleSchema({
     type: [SimpleSchema.RegEx.Id],
     optional: true,
   },
+  likesCount: {
+    type: Number,
+  },
 });
 
 Pins.attachSchema(Pins.schema);
@@ -76,7 +82,6 @@ Pins.helpers({
   board() {
     return Boards.findOne({ _id: this.boardId });
   },
-
   /*
    * a pin is editable by a given user if the user can edit
    * the board in which the pin lives in
@@ -84,7 +89,6 @@ Pins.helpers({
   editableBy(userId) {
     return this.board().editableBy(userId);
   },
-
 });
 
 export { Pins };
