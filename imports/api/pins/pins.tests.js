@@ -25,6 +25,19 @@ Factory.define('pin', Pins, {
 
 if (Meteor.isServer) {
   describe('Pins.helpers', function () {
+    describe('Pins.helpers.board', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      it('should return the board in which the pin lives in', function () {
+        const userId = Random.id();
+        const boardId = Factory.create('board', { userId })._id;
+        const pin = Factory.create('pin', { boardId });
+
+        // console.log(pin)
+        chai.assert.equal(pin.board()._id, boardId);
+      });
+    });
     describe('Pins.helpers.editableBy', function () {
       beforeEach(function () {
         resetDatabase();

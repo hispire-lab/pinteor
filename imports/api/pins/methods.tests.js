@@ -32,7 +32,6 @@ Factory.define('pin', Pins, {
   boardId: Random.id(),
 });
 
-
 if (Meteor.isServer) {
   describe('Pins.methods', function () {
     describe('Pins.methods.insert', function () {

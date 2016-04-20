@@ -14,16 +14,7 @@ tracker                 # Meteor's client-side reactive programming library
 
 
 aldeed:autoform
-accounts-ui
-accounts-password
-twbs:bootstrap
-kadira:flow-router
-kadira:blaze-layout
 aldeed:collection2
-arillo:flow-router-helpers
-aldeed:delete-button
-reactive-var
-u2622:persistent-session
 ecmascript
 es5-shim
 ramda:ramda
@@ -37,3 +28,5 @@ dburles:factory
 dburles:collection-helpers
 check
 mdg:validation-error
+accounts-base
+accounts-password
