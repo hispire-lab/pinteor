@@ -7,11 +7,10 @@ import { Users } from '../users/users.js';
 
 const likesCountDenormalizer = {
   /*
-   * FIXME:
-   * would be nice to check if the user that liked a pin was already
+   * FIXME: would be nice to check if the user that liked a pin was already
    * in the likers list, that means that the likesCount should not be increased
    * ( a given user can like a pin only once), with that we can avoid a uneccessary
-   * likkesCount update query. ( maybe this feature just makes sense if it goes
+   * likesCount update query. ( maybe this feature just makes sense if it goes
    * inside a beforeUpdatePin hook)
    */
   _updateLikesCount(pinId) {
@@ -26,17 +25,14 @@ const likesCountDenormalizer = {
     const userId = pin.board().userId;
     const owner = Users.findOne({ _id: userId });
     /*
-     * FIXME:
-     * owner is undefined for all test that not create an user with Accounts.createUser()
+     * FIXME: owner is undefined for all test that not create an user with Accounts.createUser()
      * seems like creating an user with Factory.define not adds a new user to Users
      * collection.
      */
-    if (owner) {
-      Users.update(
-        { _id: userId },
-        { $set: { likesCount: owner.pinsLiked().length } }
-      );
-    }
+    Users.update(
+      { _id: userId },
+      { $set: { likesCount: owner.pinsLiked().length } }
+    );
   },
 
   afterUpdatePin(selector, modifier) {

@@ -2,19 +2,10 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 import { Meteor } from 'meteor/meteor';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
-import { Factory } from 'meteor/dburles:factory';
 import { chai } from 'meteor/practicalmeteor:chai';
+import { Factory } from 'meteor/dburles:factory';
+import '../fixtures.tests.js';
 import { Random } from 'meteor/random';
-import faker from 'faker';
-import { Boards } from './boards.js';
-
-Factory.define('board', Boards, {
-  name: 'board A',
-  description: faker.lorem.sentence(),
-  createdAt: new Date(),
-  userId: Random.id(),
-  isPrivate: false,
-});
 
 if (Meteor.isServer) {
   describe('Boards.helpers', function () {
@@ -23,13 +14,14 @@ if (Meteor.isServer) {
         resetDatabase();
       });
       it('should be able to edit a board that the user owns', function () {
-        const userId = Random.id();
-        const board = Factory.create('board', { userId });
+        const user = Factory.create('user');
+        const board = Factory.create('board', { userId: user._id });
 
-        chai.assert.equal(true, board.editableBy(userId));
+        chai.assert.equal(true, board.editableBy(user._id));
       });
       it('should not be able to edit a board that the user not owns', function () {
-        const board = Factory.create('board');
+        const user = Factory.create('user');
+        const board = Factory.create('board', { userId: user._id });
 
         chai.assert.equal(false, board.editableBy(Random.id()));
       });

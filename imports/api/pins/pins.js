@@ -6,6 +6,7 @@ import likesCountDenormalizer from './likesCountDenormalizer.js';
 import uuid from 'uuid';
 
 class PinsCollection extends Mongo.Collection {
+
   insert(doc, callback) {
     const pin = doc;
     pin.createdAt = pin.createdAt || new Date();
@@ -14,6 +15,7 @@ class PinsCollection extends Mongo.Collection {
     const result = super.insert(pin, callback);
     return result;
   }
+
   update(selector, modifier) {
     const result = super.update(selector, modifier);
     isPrivateDenormalizer.afterUpdatePin(selector, modifier);
@@ -23,6 +25,7 @@ class PinsCollection extends Mongo.Collection {
 }
 
 const Pins = new PinsCollection('Pins');
+
 /*
  * We attach the schema to the namespace of Pins directly, which allows us to
  * check objects against this schema directly whenever we want, such as in a
@@ -64,6 +67,10 @@ Pins.schema = new SimpleSchema({
      */
     defaultValue: false,
   },
+  /*
+   * FIXME:
+   * rename this prop to likers.
+   */
   likes: {
     type: [SimpleSchema.RegEx.Id],
     optional: true,

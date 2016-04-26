@@ -26,6 +26,18 @@ class BoardsCollection extends Mongo.Collection {
   insert(doc, callback) {
     const board = doc;
     board.createdAt = board.createdAt || new Date();
+
+    /*
+     * NOTE: !board.isPrivate is checking for undefined and for falsy values,
+     * so a board's privacy is setted to false when is explicitly setted via
+     * a param in insert or when is not setted.
+     */
+    if (!board.isPrivate) {
+      board.isPrivate = false;
+    } else {
+      board.isPrivate = true;
+    }
+
     board.slug = slug(board.name);
     const result = super.insert(board, callback);
     return result;
@@ -80,7 +92,6 @@ Boards.schema = new SimpleSchema({
   },
   isPrivate: {
     type: Boolean,
-    defaultValue: false,
   },
 });
 

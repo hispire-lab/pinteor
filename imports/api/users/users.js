@@ -1,21 +1,7 @@
 import { Meteor } from 'meteor/meteor';
-// import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Boards } from '../boards/boards.js';
 import { Pins } from '../pins/pins.js';
-
-/*
-class UsersCollection extends Meteor.users {
-  insert(doc, callback) {
-    const user = doc;
-    user.createdAt = user.createdAt || new Date();
-    const result = super.insert(user, callback);
-    return result;
-  }
-}
-*/
-
-// const Users = new UsersCollection('Users');
 
 const Users = Meteor.users;
 
@@ -53,8 +39,7 @@ Users.schema = new SimpleSchema({
   likesCount: {
     type: Number,
     optional: true,
-    // i don't know how to hook into Meteor.users collection so i am putting
-    // here the defaultValue instead inside the insert hook.
+    // this should be moved to Accounts.onCreatedUser callback
     defaultValue: 0,
   },
 });

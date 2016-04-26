@@ -12,10 +12,9 @@ import { insert as pinInsert, like as pinLike, unlike as pinUnlike } from '../pi
 
 
 if (Meteor.isServer) {
-  describe('Users', function () {
+  describe.skip('Users', function () {
     /*
-     * TODO:
-     * add test for Users.likesCount with more than one board.
+     * TODO: add test for Users.likesCount with more than one board.
      */
     describe('Users.likesCount', function () {
       beforeEach(function () {

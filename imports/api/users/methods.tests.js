@@ -15,7 +15,7 @@ Factory.define('user', Users, {
 });
 
 if (Meteor.isServer) {
-  describe('Users.methods', function () {
+  describe.skip('Users.methods', function () {
     describe('Users.methods.follow', function () {
       beforeEach(function () {
         resetDatabase();

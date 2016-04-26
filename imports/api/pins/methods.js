@@ -5,8 +5,7 @@ import { Pins } from './pins.js';
 import { Boards } from '../boards/boards.js';
 
 /*
- * TODO:
- * Attach method to a namespace, like Pins.methods.insert
+ * TODO: Attach method to a namespace, like Pins.methods.insert
  */
 const insert = new ValidatedMethod({
   // The name of the method, sent over the wire. Same as the key provided
@@ -51,6 +50,7 @@ const insert = new ValidatedMethod({
         'Cannot add a pin to a board that is not yours.'
       );
     }
+
     const newPin = {
       boardId,
       imgUrl,
@@ -253,8 +253,7 @@ const like = new ValidatedMethod({
   // This is the body of the method. Use ES2015 object destructuring to get
   // the keyword arguments
   /*
-   * FIXME:
-   * have no sense to be able to like a private pin
+   * FIXME: have no sense to be able to like a private pin
    */
   run({ pinId }) {
     if (!this.userId) {

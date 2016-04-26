@@ -12,13 +12,13 @@ session                 # Client-side reactive dictionary for your app
 jquery                  # Helpful client-side library
 tracker                 # Meteor's client-side reactive programming library
 
-
-aldeed:autoform
+stub-collections
+# aldeed:autoform
 aldeed:collection2
 ecmascript
 es5-shim
 ramda:ramda
-standard-minifier-css
+# standard-minifier-css
 standard-minifier-js
 mdg:validated-method
 practicalmeteor:mocha
@@ -30,3 +30,5 @@ check
 mdg:validation-error
 accounts-base
 accounts-password
+# velocity:meteor-stubs
+# useful:collection-mocks

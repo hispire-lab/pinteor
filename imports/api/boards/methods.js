@@ -66,6 +66,10 @@ const insert = new ValidatedMethod({
         type: String,
         optional: true,
       },
+      isPrivate: {
+        type: Boolean,
+        optional: true,
+      },
     })
     .validate({ name, description }, {
       extendedCustomContext: { userId: this.userId },
