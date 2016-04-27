@@ -4,107 +4,93 @@
 import { Meteor } from 'meteor/meteor';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import { chai } from 'meteor/practicalmeteor:chai';
-import faker from 'faker';
-import { Accounts } from 'meteor/accounts-base';
+import { Factory } from 'meteor/dburles:factory';
+import '../fixtures.tests.js';
 import { Users } from './users.js';
-import { insert as boardInsert } from '../boards/methods.js';
-import { insert as pinInsert, like as pinLike, unlike as pinUnlike } from '../pins/methods.js';
-
+import { like, unlike } from '../pins/methods.js';
 
 if (Meteor.isServer) {
-  describe.skip('Users', function () {
-    /*
-     * TODO: add test for Users.likesCount with more than one board.
-     */
+  describe('Users', function () {
     describe('Users.likesCount', function () {
+      /*
+       * TODO: add test for Users.likesCount with more than one board.
+       */
       beforeEach(function () {
         resetDatabase();
       });
       it('should increase likes count when different pins are liked', function () {
-        const userId = Accounts.createUser({
-          username: faker.internet.userName(),
-          password: 'password',
-        });
-        const boardId = boardInsert._execute({ userId }, { name: 'board A' });
-        const pinId1 = pinInsert._execute({ userId }, { boardId, imgUrl: faker.image.imageUrl() });
-        const pinId2 = pinInsert._execute({ userId }, { boardId, imgUrl: faker.image.imageUrl() });
-        const pinId3 = pinInsert._execute({ userId }, { boardId, imgUrl: faker.image.imageUrl() });
+        const user = Factory.create('user');
+        const board = Factory.create('board', { userId: user._id });
+        const pin1 = Factory.create('pin', { boardId: board._id });
+        const pin2 = Factory.create('pin', { boardId: board._id });
+        const pin3 = Factory.create('pin', { boardId: board._id });
 
-        chai.assert.equal(0, Users.findOne({ _id: userId }).likesCount);
+        chai.assert.equal(0, Users.findOne({ _id: user._id }).likesCount);
 
-        pinLike._execute({ userId }, { pinId: pinId1 });
-        chai.assert.equal(1, Users.findOne({ _id: userId }).likesCount);
+        like._execute({ userId: user._id }, { pinId: pin1._id });
+        chai.assert.equal(1, Users.findOne({ _id: user._id }).likesCount);
 
-        pinLike._execute({ userId }, { pinId: pinId2 });
-        chai.assert.equal(2, Users.findOne({ _id: userId }).likesCount);
+        like._execute({ userId: user._id }, { pinId: pin2._id });
+        chai.assert.equal(2, Users.findOne({ _id: user._id }).likesCount);
 
-        pinLike._execute({ userId }, { pinId: pinId3 });
-        chai.assert.equal(3, Users.findOne({ _id: userId }).likesCount);
+        like._execute({ userId: user._id }, { pinId: pin3._id });
+        chai.assert.equal(3, Users.findOne({ _id: user._id }).likesCount);
       });
       it('should increase likes count just once when same pins are liked', function () {
-        const userId = Accounts.createUser({
-          username: faker.internet.userName(),
-          password: 'password',
-        });
-        const boardId = boardInsert._execute({ userId }, { name: 'board A' });
-        const pinId = pinInsert._execute({ userId }, { boardId, imgUrl: faker.image.imageUrl() });
+        const user = Factory.create('user');
+        const board = Factory.create('board', { userId: user._id });
+        const pin = Factory.create('pin', { boardId: board._id });
 
-        chai.assert.equal(0, Users.findOne({ _id: userId }).likesCount);
+        chai.assert.equal(0, Users.findOne({ _id: user._id }).likesCount);
 
-        pinLike._execute({ userId }, { pinId });
-        chai.assert.equal(1, Users.findOne({ _id: userId }).likesCount);
+        like._execute({ userId: user._id }, { pinId: pin._id });
+        chai.assert.equal(1, Users.findOne({ _id: user._id }).likesCount);
 
-        pinLike._execute({ userId }, { pinId });
-        chai.assert.equal(1, Users.findOne({ _id: userId }).likesCount);
+        like._execute({ userId: user._id }, { pinId: pin._id });
+        chai.assert.equal(1, Users.findOne({ _id: user._id }).likesCount);
 
-        pinLike._execute({ userId }, { pinId });
-        chai.assert.equal(1, Users.findOne({ _id: userId }).likesCount);
+        like._execute({ userId: user._id }, { pinId: pin._id });
+        chai.assert.equal(1, Users.findOne({ _id: user._id }).likesCount);
       });
       it('should decrease likes count when different pins are unliked', function () {
-        const userId = Accounts.createUser({
-          username: faker.internet.userName(),
-          password: 'password',
-        });
-        const boardId = boardInsert._execute({ userId }, { name: 'board A' });
-        const pinId1 = pinInsert._execute({ userId }, { boardId, imgUrl: faker.image.imageUrl() });
-        const pinId2 = pinInsert._execute({ userId }, { boardId, imgUrl: faker.image.imageUrl() });
-        const pinId3 = pinInsert._execute({ userId }, { boardId, imgUrl: faker.image.imageUrl() });
+        const user = Factory.create('user');
+        const board = Factory.create('board', { userId: user._id });
+        const pin1 = Factory.create('pin', { boardId: board._id });
+        const pin2 = Factory.create('pin', { boardId: board._id });
+        const pin3 = Factory.create('pin', { boardId: board._id });
 
-        pinLike._execute({ userId }, { pinId: pinId1 });
-        pinLike._execute({ userId }, { pinId: pinId2 });
-        pinLike._execute({ userId }, { pinId: pinId3 });
+        like._execute({ userId: user._id }, { pinId: pin1._id });
+        like._execute({ userId: user._id }, { pinId: pin2._id });
+        like._execute({ userId: user._id }, { pinId: pin3._id });
 
-        chai.assert.equal(3, Users.findOne({ _id: userId }).likesCount);
+        chai.assert.equal(3, Users.findOne({ _id: user._id }).likesCount);
 
-        pinUnlike._execute({ userId }, { pinId: pinId1 });
-        chai.assert.equal(2, Users.findOne({ _id: userId }).likesCount);
+        unlike._execute({ userId: user._id }, { pinId: pin1._id });
+        chai.assert.equal(2, Users.findOne({ _id: user._id }).likesCount);
 
-        pinUnlike._execute({ userId }, { pinId: pinId2 });
-        chai.assert.equal(1, Users.findOne({ _id: userId }).likesCount);
+        unlike._execute({ userId: user._id }, { pinId: pin2._id });
+        chai.assert.equal(1, Users.findOne({ _id: user._id }).likesCount);
 
-        pinUnlike._execute({ userId }, { pinId: pinId3 });
-        chai.assert.equal(0, Users.findOne({ _id: userId }).likesCount);
+        unlike._execute({ userId: user._id }, { pinId: pin3._id });
+        chai.assert.equal(0, Users.findOne({ _id: user._id }).likesCount);
       });
       it('should decrease likes count just once when same pins are unliked', function () {
-        const userId = Accounts.createUser({
-          username: faker.internet.userName(),
-          password: 'password',
-        });
-        const boardId = boardInsert._execute({ userId }, { name: 'board A' });
-        const pinId = pinInsert._execute({ userId }, { boardId, imgUrl: faker.image.imageUrl() });
+        const user = Factory.create('user');
+        const board = Factory.create('board', { userId: user._id });
+        const pin = Factory.create('pin', { boardId: board._id });
 
-        pinLike._execute({ userId }, { pinId });
+        like._execute({ userId: user._id }, { pinId: pin._id });
 
-        chai.assert.equal(1, Users.findOne({ _id: userId }).likesCount);
+        chai.assert.equal(1, Users.findOne({ _id: user._id }).likesCount);
 
-        pinUnlike._execute({ userId }, { pinId });
-        chai.assert.equal(0, Users.findOne({ _id: userId }).likesCount);
+        unlike._execute({ userId: user._id }, { pinId: pin._id });
+        chai.assert.equal(0, Users.findOne({ _id: user._id }).likesCount);
 
-        pinUnlike._execute({ userId }, { pinId });
-        chai.assert.equal(0, Users.findOne({ _id: userId }).likesCount);
+        unlike._execute({ userId: user._id }, { pinId: pin._id });
+        chai.assert.equal(0, Users.findOne({ _id: user._id }).likesCount);
 
-        pinUnlike._execute({ userId }, { pinId });
-        chai.assert.equal(0, Users.findOne({ _id: userId }).likesCount);
+        unlike._execute({ userId: user._id }, { pinId: pin._id });
+        chai.assert.equal(0, Users.findOne({ _id: user._id }).likesCount);
       });
     });
   });

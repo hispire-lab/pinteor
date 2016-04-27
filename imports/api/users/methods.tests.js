@@ -2,20 +2,17 @@
 /* eslint-disable func-names, prefer-arrow-callback */
 import { Meteor } from 'meteor/meteor';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
-import { Factory } from 'meteor/dburles:factory';
 import { chai } from 'meteor/practicalmeteor:chai';
+import { Factory } from 'meteor/dburles:factory';
+import '../fixtures.tests.js';
 import { Random } from 'meteor/random';
 import faker from 'faker';
 import { Users } from './users.js';
 import { follow, unfollow } from './methods.js';
 
-Factory.define('user', Users, {
-  username: faker.name.firstName(),
-  createdAt: new Date(),
-});
 
 if (Meteor.isServer) {
-  describe.skip('Users.methods', function () {
+  describe('Users.methods', function () {
     describe('Users.methods.follow', function () {
       beforeEach(function () {
         resetDatabase();
@@ -28,8 +25,8 @@ if (Meteor.isServer) {
         }, Meteor.Error, /Cannot follow a non existing user./);
       });
       it('should follow another user', function () {
-        const srcUser = Factory.create('user', { username: 'username1' });
-        const dstUser = Factory.create('user', { username: 'username2' });
+        const srcUser = Factory.create('user', { username: faker.internet.userName() });
+        const dstUser = Factory.create('user', { username: faker.internet.userName() });
 
         follow._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
 
@@ -39,8 +36,8 @@ if (Meteor.isServer) {
         );
       });
       it('should follow another user and be a follower', function () {
-        const srcUser = Factory.create('user', { username: 'username1' });
-        const dstUser = Factory.create('user', { username: 'username2' });
+        const srcUser = Factory.create('user', { username: faker.internet.userName() });
+        const dstUser = Factory.create('user', { username: faker.internet.userName() });
 
         follow._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
 
@@ -62,8 +59,8 @@ if (Meteor.isServer) {
         }, Meteor.Error, /Cannot unfollow a non existing user./);
       });
       it('should unfollow another user', function () {
-        const srcUser = Factory.create('user', { username: 'username1' });
-        const dstUser = Factory.create('user', { username: 'username2' });
+        const srcUser = Factory.create('user', { username: faker.internet.userName() });
+        const dstUser = Factory.create('user', { username: faker.internet.userName() });
         follow._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
 
         unfollow._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
@@ -73,8 +70,8 @@ if (Meteor.isServer) {
         );
       });
       it('should unfollow another user an not be a follower.', function () {
-        const srcUser = Factory.create('user', { username: 'username1' });
-        const dstUser = Factory.create('user', { username: 'username2' });
+        const srcUser = Factory.create('user', { username: faker.internet.userName() });
+        const dstUser = Factory.create('user', { username: faker.internet.userName() });
         follow._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
 
         unfollow._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
