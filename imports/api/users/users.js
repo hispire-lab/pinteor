@@ -39,7 +39,7 @@ Users.schema = new SimpleSchema({
   likesCount: {
     type: Number,
     optional: true,
-    // this should be moved to Accounts.onCreatedUser callback
+    // FIXME: this should be moved to Accounts.onCreatedUser callback
     defaultValue: 0,
   },
 });
