@@ -21,16 +21,16 @@ const insert = new ValidatedMethod({
   // validation in one place.
   validate: new SimpleSchema({
     userId: {
-      type: [SimpleSchema.RegEx.Id],
-    },
-    subject: {
       type: String,
+      regEx: [SimpleSchema.RegEx.Id],
     },
-    body: {
+    senderId: {
       type: String,
+      regEx: [SimpleSchema.RegEx.Id],
     },
     objectId: {
-      type: [SimpleSchema.RegEx.Id],
+      type: String,
+      regEx: [SimpleSchema.RegEx.Id],
     },
     objectType: {
       type: String,
@@ -38,11 +38,10 @@ const insert = new ValidatedMethod({
   }).validator(),
   // This is the body of the method. Use ES2015 object destructuring to get
   // the keyword arguments
-  run({ userId, subject, body, objectId, objectType }) {
+  run({ userId, senderId, objectId, objectType }) {
     return Notifications.insert({
       userId,
-      subject,
-      body,
+      senderId,
       objectId,
       objectType,
     });

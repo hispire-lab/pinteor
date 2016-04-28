@@ -4,6 +4,7 @@
 import { Meteor } from 'meteor/meteor';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import { chai } from 'meteor/practicalmeteor:chai';
+import faker from 'faker';
 import { Factory } from 'meteor/dburles:factory';
 import '../fixtures.tests.js';
 import { Users } from './users.js';
@@ -91,6 +92,28 @@ if (Meteor.isServer) {
 
         unlike._execute({ userId: user._id }, { pinId: pin._id });
         chai.assert.equal(0, Users.findOne({ _id: user._id }).likesCount);
+      });
+    });
+    describe('Users.helpers.unread', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      it('should has a notification in unreads notifications', function () {
+        const userAnother = Factory.create('user', { username: faker.internet.userName() });
+        const user = Factory.create('user');
+        const board = Factory.create('board', { userId: user._id });
+        const pin = Factory.create('pin', { userId: user._id, boardId: board._id });
+
+        like._execute({ userId: userAnother._id }, { pinId: pin._id });
+
+        const unreadNotifications = user.unreadNotifications();
+        chai.assert.equal(1, unreadNotifications.count());
+
+        const unreadNotification = unreadNotifications.fetch()[0];
+        chai.assert.equal(user._id, unreadNotification.userId);
+        chai.assert.equal(userAnother._id, unreadNotification.senderId);
+        chai.assert.equal(pin._id, unreadNotification.objectId);
+        chai.assert.equal('Pin', unreadNotification.objectType);
       });
     });
   });

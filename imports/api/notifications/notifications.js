@@ -4,6 +4,8 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 class NotificationsCollection extends Mongo.Collection {
   insert(doc, callback) {
     const notification = doc;
+    notification.subject = '';
+    notification.body = '';
     notification.isRead = false;
     notification.createdAt = notification.createdAt || new Date();
     const result = super.insert(notification, callback);
@@ -25,11 +27,17 @@ Notifications.Schema = new SimpleSchema({
     type: String,
     regEx: [SimpleSchema.RegEx.Id],
   },
+  senderId: {
+    type: String,
+    regEx: [SimpleSchema.RegEx.Id],
+  },
   subject: {
     type: String,
+    optional: true,
   },
   body: {
     type: String,
+    optional: true,
   },
   objectId: {
     type: String,
@@ -56,15 +64,6 @@ Notifications.Schema = new SimpleSchema({
 
 Notifications.attachSchema(Notifications.Schema);
 
-Notifications.helpers({
-
-  unread() {
-    return Notifications.find({
-      userId: this.userId,
-      isRead: { $eq: false },
-    });
-  },
-
-});
+Notifications.helpers({});
 
 export { Notifications };

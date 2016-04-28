@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Boards } from '../boards/boards.js';
 import { Pins } from '../pins/pins.js';
+import { Notifications } from '../notifications/notifications.js';
 
 const Users = Meteor.users;
 
@@ -63,6 +64,13 @@ Users.helpers({
       boardId: { $in: boardIds },
       likesCount: { $gt: 0 },
     }).fetch();
+  },
+
+  unreadNotifications() {
+    return Notifications.find({
+      userId: this._id,
+      isRead: { $eq: false },
+    });
   },
 
 });
