@@ -48,6 +48,10 @@ Pins.schema = new SimpleSchema({
   createdAt: {
     type: Date,
   },
+  userId: {
+    type: String,
+    regEx: SimpleSchema.RegEx.Id,
+  },
   /*
    * TODO:
    * work out the meaning of the following rule, the sample todo App uses it.
@@ -94,7 +98,7 @@ Pins.helpers({
    * the board in which the pin lives in
    */
   editableBy(userId) {
-    return this.board().editableBy(userId);
+    return this.userId === userId;
   },
 });
 

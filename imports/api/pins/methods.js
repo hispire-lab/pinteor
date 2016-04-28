@@ -52,6 +52,7 @@ const insert = new ValidatedMethod({
     }
 
     const newPin = {
+      userId: this.userId,
       boardId,
       imgUrl,
       description,

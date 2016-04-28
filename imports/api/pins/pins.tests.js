@@ -17,7 +17,7 @@ if (Meteor.isServer) {
       it('should return the board in which the pin lives in', function () {
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
-        const pin = Factory.create('pin', { boardId: board._id });
+        const pin = Factory.create('pin', { userId: user._id, boardId: board._id });
 
         chai.assert.equal(pin.board()._id, board._id);
       });
@@ -29,14 +29,14 @@ if (Meteor.isServer) {
       it('should be able to edit a pin that the user owns', function () {
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
-        const pin = Factory.create('pin', { boardId: board._id });
+        const pin = Factory.create('pin', { userId: user._id, boardId: board._id });
 
         chai.assert.equal(true, pin.editableBy(user._id));
       });
       it('should not be able to edit a pin that the user not owns', function () {
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
-        const pin = Factory.create('pin', { boardId: board._id });
+        const pin = Factory.create('pin', { userId: user._id, boardId: board._id });
 
         chai.assert.equal(false, pin.editableBy(Random.id()));
       });

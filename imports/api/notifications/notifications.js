@@ -22,7 +22,8 @@ const Notifications = new NotificationsCollection('Notifications');
  */
 Notifications.Schema = new SimpleSchema({
   userId: {
-    type: [SimpleSchema.RegEx.Id],
+    type: String,
+    regEx: [SimpleSchema.RegEx.Id],
   },
   subject: {
     type: String,
@@ -31,7 +32,8 @@ Notifications.Schema = new SimpleSchema({
     type: String,
   },
   objectId: {
-    type: [SimpleSchema.RegEx.Id],
+    type: String,
+    regEx: [SimpleSchema.RegEx.Id],
   },
   objectType: {
     type: String,

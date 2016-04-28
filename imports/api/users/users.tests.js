@@ -21,9 +21,9 @@ if (Meteor.isServer) {
       it('should increase likes count when different pins are liked', function () {
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
-        const pin1 = Factory.create('pin', { boardId: board._id });
-        const pin2 = Factory.create('pin', { boardId: board._id });
-        const pin3 = Factory.create('pin', { boardId: board._id });
+        const pin1 = Factory.create('pin', { userId: user._id, boardId: board._id });
+        const pin2 = Factory.create('pin', { userId: user._id, boardId: board._id });
+        const pin3 = Factory.create('pin', { userId: user._id, boardId: board._id });
 
         chai.assert.equal(0, Users.findOne({ _id: user._id }).likesCount);
 
@@ -39,7 +39,7 @@ if (Meteor.isServer) {
       it('should increase likes count just once when same pins are liked', function () {
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
-        const pin = Factory.create('pin', { boardId: board._id });
+        const pin = Factory.create('pin', { userId: user._id, boardId: board._id });
 
         chai.assert.equal(0, Users.findOne({ _id: user._id }).likesCount);
 
@@ -55,9 +55,9 @@ if (Meteor.isServer) {
       it('should decrease likes count when different pins are unliked', function () {
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
-        const pin1 = Factory.create('pin', { boardId: board._id });
-        const pin2 = Factory.create('pin', { boardId: board._id });
-        const pin3 = Factory.create('pin', { boardId: board._id });
+        const pin1 = Factory.create('pin', { userId: user._id, boardId: board._id });
+        const pin2 = Factory.create('pin', { userId: user._id, boardId: board._id });
+        const pin3 = Factory.create('pin', { userId: user._id, boardId: board._id });
 
         like._execute({ userId: user._id }, { pinId: pin1._id });
         like._execute({ userId: user._id }, { pinId: pin2._id });
@@ -77,7 +77,7 @@ if (Meteor.isServer) {
       it('should decrease likes count just once when same pins are unliked', function () {
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
-        const pin = Factory.create('pin', { boardId: board._id });
+        const pin = Factory.create('pin', { userId: user._id, boardId: board._id });
 
         like._execute({ userId: user._id }, { pinId: pin._id });
 
