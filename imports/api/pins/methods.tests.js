@@ -9,7 +9,7 @@ import faker from 'faker';
 import { Factory } from 'meteor/dburles:factory';
 import '../fixtures.tests.js';
 import { Pins } from './pins.js';
-import { insert, setPinData, move, copy, like, unlike } from './methods.js';
+import { insert, setPinData, move, copy, save, like, unlike } from './methods.js';
 
 if (Meteor.isServer) {
   describe('Pins.methods', function () {
@@ -300,6 +300,106 @@ if (Meteor.isServer) {
         chai.assert.equal(fromPin.imgUrl, copiedPin.imgUrl);
         chai.assert.equal(fromPin.description, copiedPin.description);
         chai.assert.equal(fromBoard.isPrivate, copiedPin.isPrivate);
+      });
+    });
+    describe('Pins.methods.save', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      it('should not be able to save a pin if user is not logged in', function () {
+        const userAnother = Factory.create('user', { username: faker.internet.userName() });
+        const user = Factory.create('user');
+        const fromBoard = Factory.create('board', {
+          userId: user._id,
+          name: 'from board',
+          isPrivate: false,
+        });
+        const toBoard = Factory.create('board', {
+          userId: userAnother._id,
+          name: 'to board',
+          isPrivate: true,
+        });
+        const fromPinId = insert._execute({ userId: user._id }, {
+          boardId: fromBoard._id,
+          imgUrl: faker.image.imageUrl(),
+        });
+
+        chai.assert.throws(() => {
+          save._execute({}, { pinId: fromPinId, boardId: toBoard._id });
+        }, Meteor.Error, /Must be logged in to save a pin./);
+      });
+      it('should not be able to save a pin if user is owner', function () {
+        const userOwner = Factory.create('user');
+        const fromBoard = Factory.create('board', {
+          userId: userOwner._id,
+          name: 'from board',
+          isPrivate: false,
+        });
+        const toBoard = Factory.create('board', {
+          userId: userOwner._id,
+          name: 'to board',
+          isPrivate: true,
+        });
+        const fromPinId = insert._execute({ userId: userOwner._id }, {
+          boardId: fromBoard._id,
+          imgUrl: faker.image.imageUrl(),
+        });
+
+        chai.assert.throws(() => {
+          save._execute({ userId: userOwner._id }, { pinId: fromPinId, boardId: toBoard._id });
+        }, Meteor.Error, /Cannot save your own pin./);
+      });
+      it('should not be able to save a pin to a board that the user not owns', function () {
+        const userAnother = Factory.create('user', { username: faker.internet.userName() });
+        const user = Factory.create('user');
+        const fromBoard = Factory.create('board', {
+          userId: user._id,
+          name: 'from board',
+          isPrivate: false,
+        });
+        const toBoard = Factory.create('board', {
+          userId: user._id,
+          name: 'to board',
+          isPrivate: true,
+        });
+        const fromPinId = insert._execute({ userId: user._id }, {
+          boardId: fromBoard._id,
+          imgUrl: faker.image.imageUrl(),
+        });
+
+        chai.assert.throws(() => {
+          save._execute({ userId: userAnother._id }, { pinId: fromPinId, boardId: toBoard._id });
+        }, Meteor.Error, /Cannot save a pin to a board that is not yours./);
+      });
+      it('should save a pin to a board', function () {
+        const userAnother = Factory.create('user', { username: faker.internet.userName() });
+        const user = Factory.create('user');
+        const fromBoard = Factory.create('board', {
+          userId: user._id,
+          name: 'from board',
+          isPrivate: false,
+        });
+        const toBoard = Factory.create('board', {
+          userId: userAnother._id,
+          name: 'to board',
+          isPrivate: true,
+        });
+        const fromPinId = insert._execute({ userId: user._id }, {
+          boardId: fromBoard._id,
+          imgUrl: faker.image.imageUrl(),
+        });
+
+        const fromPin = Pins.findOne({ _id: fromPinId });
+        const copiedPinId = save._execute(
+          { userId: userAnother._id },
+          { pinId: fromPinId, boardId: toBoard._id }
+        );
+
+        const copiedPin = Pins.findOne({ _id: copiedPinId });
+        chai.assert.notEqual(fromPin._id, copiedPin._id);
+        chai.assert.equal(fromPin.imgUrl, copiedPin.imgUrl);
+        chai.assert.equal(fromPin.description, copiedPin.description);
+        chai.assert.equal(toBoard.isPrivate, copiedPin.isPrivate);
       });
     });
     describe('Pins.methods.like', function () {

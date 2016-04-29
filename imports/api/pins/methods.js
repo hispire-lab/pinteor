@@ -231,6 +231,68 @@ const copy = new ValidatedMethod({
 
 /*
  * TODO:
+ * Attach method to a namespace, like Pins.methods.save
+ */
+const save = new ValidatedMethod({
+  // The name of the method, sent over the wire. Same as the key provided
+  // when calling Meteor.methods
+  name: 'Pins.methods.save',
+  // Validation function for the arguments. Only keyword arguments are accepted,
+  // so the arguments are an object rather than an array. The SimpleSchema validator
+  // throws a ValidationError from the mdg:validation-error package if the args don't
+  // match the schema
+  //
+  // This Method encodes the form validation requirements.
+  // By defining them in the Method, we do client and server-side
+  // validation in one place.
+  validate: new SimpleSchema({
+    pinId: {
+      type: String,
+      regEx: SimpleSchema.RegEx.Id,
+    },
+    boardId: {
+      type: String,
+      regEx: SimpleSchema.RegEx.Id,
+    },
+  }).validator(),
+  // This is the body of the method. Use ES2015 object destructuring to get
+  // the keyword arguments
+  run({ pinId, boardId }) {
+    if (!this.userId) {
+      throw new Meteor.Error(
+        'Pins.methods.save.not-logged-in',
+        'Must be logged in to save a pin.'
+      );
+    }
+    /*
+     * TODO: check if thew pin exists, check if the pin is private.
+     * check if user is owner of the pin.
+     */
+    const pin = Pins.findOne({ _id: pinId });
+    if (pin.isOwner(this.userId)) {
+      throw new Meteor.Error(
+        'Pins.methods.save.forbidden',
+        'Cannot save your own pin.'
+      );
+    }
+    const board = Boards.findOne({ _id: boardId });
+    if (!board.editableBy(this.userId)) {
+      throw new Meteor.Error(
+        'Pins.methods.copy.access-denied',
+        'Cannot save a pin to a board that is not yours.'
+      );
+    }
+
+    return insert._execute({ userId: this.userId }, {
+      boardId,
+      imgUrl: pin.imgUrl,
+      description: pin.description,
+    });
+  },
+});
+
+/*
+ * TODO:
  * Attach method to a namespace, like Pins.methods.like
  */
 const like = new ValidatedMethod({
@@ -339,4 +401,4 @@ const unlike = new ValidatedMethod({
   },
 });
 
-export { insert, setPinData, move, copy, like, unlike };
+export { insert, setPinData, move, copy, save, like, unlike };

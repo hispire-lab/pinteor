@@ -52,12 +52,18 @@ Users.helpers({
   boards() {
     return Boards.find({ userId: this._id });
   },
-
+  /*
+   * FIXME: now userId is denormalized into pins so the board
+   * query is unneccessary.
+   */
   pins() {
     const boardIds = this.boards().map(board => board._id);
     return Pins.find({ boardId: { $in: boardIds } }).fetch();
   },
-
+  /*
+   * FIXME: now userId is denormalized into pins so the board
+   * query is unneccessary.
+   */
   pinsLiked() {
     const boardIds = this.boards().map(board => board._id);
     return Pins.find({
