@@ -102,6 +102,9 @@ Pins.helpers({
   editableBy(userId) {
     return this.userId === userId;
   },
+  isOwner(userId) {
+    return this.userId === userId;
+  },
 });
 
 export { Pins };

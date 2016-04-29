@@ -270,6 +270,13 @@ const like = new ValidatedMethod({
         'Cannot like a non existing pin.'
       );
     }
+    if (pin.isOwner(this.userId)) {
+      throw new Meteor.Error(
+        'Pins.methods.like.forbidden',
+        'Cannot like your own pin.'
+      );
+    }
+
     return Pins.update(
       { _id: pinId },
       { $addToSet: { likes: this.userId } }
@@ -317,6 +324,12 @@ const unlike = new ValidatedMethod({
       throw new Meteor.Error(
         'Pins.methods.like.not-found',
         'Cannot unlike a non existing pin.'
+      );
+    }
+    if (pin.isOwner(this.userId)) {
+      throw new Meteor.Error(
+        'Pins.methods.unlike.forbidden',
+        'Cannot unlike your own pin.'
       );
     }
     return Pins.update(

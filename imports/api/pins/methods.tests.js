@@ -326,6 +326,7 @@ if (Meteor.isServer) {
         }, Meteor.Error, /Cannot like a non existing pin./);
       });
       it('should like a pin.', function () {
+        const userAnother = Factory.create('user', { username: faker.internet.userName() });
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
 
@@ -333,11 +334,11 @@ if (Meteor.isServer) {
           boardId: board._id,
           imgUrl: faker.image.imageUrl(),
         });
-        const isTrue = like._execute({ userId: board.userId }, { pinId });
+        const isTrue = like._execute({ userId: userAnother._id }, { pinId });
 
         chai.assert.equal(true, isTrue);
         chai.assert.equal(
-          Pins.findOne({ _id: pinId, likes: board.userId })._id,
+          Pins.findOne({ _id: pinId, likes: userAnother._id })._id,
           pinId
         );
       });
@@ -362,6 +363,7 @@ if (Meteor.isServer) {
         chai.assert.equal(3, Pins.findOne({ _id: pinId }).likesCount);
       });
       it('should increase likes count once when same user likes a pin many times', function () {
+        const userAnother = Factory.create('user', { username: faker.internet.userName() });
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
 
@@ -372,13 +374,13 @@ if (Meteor.isServer) {
 
         chai.assert.equal(0, Pins.findOne({ _id: pinId }).likesCount);
 
-        like._execute({ userId: board.userId }, { pinId });
+        like._execute({ userId: userAnother._id }, { pinId });
         chai.assert.equal(1, Pins.findOne({ _id: pinId }).likesCount);
 
-        like._execute({ userId: board.userId }, { pinId });
+        like._execute({ userId: userAnother._id }, { pinId });
         chai.assert.equal(1, Pins.findOne({ _id: pinId }).likesCount);
 
-        like._execute({ userId: board.userId }, { pinId });
+        like._execute({ userId: userAnother._id }, { pinId });
         chai.assert.equal(1, Pins.findOne({ _id: pinId }).likesCount);
       });
     });
@@ -407,6 +409,7 @@ if (Meteor.isServer) {
         }, Meteor.Error, /Cannot unlike a non existing pin./);
       });
       it('should unlike a pin.', function () {
+        const userAnother = Factory.create('user', { username: faker.internet.userName() });
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
 
@@ -414,11 +417,11 @@ if (Meteor.isServer) {
           boardId: board._id,
           imgUrl: faker.image.imageUrl(),
         });
-        like._execute({ userId: board.userId }, { pinId });
+        like._execute({ userId: userAnother._id }, { pinId });
 
-        const isTrue = unlike._execute({ userId: board.userId }, { pinId });
+        const isTrue = unlike._execute({ userId: userAnother._id }, { pinId });
         chai.assert.equal(true, isTrue);
-        chai.assert.isUndefined(Pins.findOne({ _id: pinId, likes: board.userId }));
+        chai.assert.isUndefined(Pins.findOne({ _id: pinId, likes: userAnother._id }));
       });
       it('should decrease likes count when different users unlikes a pin', function () {
         const user = Factory.create('user');
