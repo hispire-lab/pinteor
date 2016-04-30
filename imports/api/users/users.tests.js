@@ -117,7 +117,7 @@ if (Meteor.isServer) {
         chai.assert.equal(user._id, unreadNotification.userId);
         chai.assert.equal(userAnother._id, unreadNotification.senderId);
         chai.assert.equal(pin._id, unreadNotification.objectId);
-        chai.assert.equal('Pin', unreadNotification.objectType);
+        chai.assert.equal('likesYourPin', unreadNotification.objectType);
       });
     });
   });

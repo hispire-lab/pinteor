@@ -14,8 +14,7 @@ const notificationsDenormalizer = {
   afterUpdatePin(selector, modifier) {
     // we have three types of modifiers, $set, $addToSet and $pull
     /*
-     * TODO:
-     * be more restrictive with likes checks, instead of checking for String,
+     * TODO: be more restrictive with likes checks, instead of checking for String,
      * figure out how to check for userIds.
      */
     check(modifier, Match.OneOf(

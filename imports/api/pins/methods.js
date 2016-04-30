@@ -3,6 +3,7 @@ import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Pins } from './pins.js';
 import { Boards } from '../boards/boards.js';
+import { insert as insertNotification } from '../notifications/methods.js';
 
 /*
  * TODO: Attach method to a namespace, like Pins.methods.insert
@@ -283,11 +284,20 @@ const save = new ValidatedMethod({
       );
     }
 
-    return insert._execute({ userId: this.userId }, {
+    const result = insert._execute({ userId: this.userId }, {
       boardId,
       imgUrl: pin.imgUrl,
       description: pin.description,
     });
+
+    insertNotification.call({
+      userId: pin.userId,
+      senderId: this.userId,
+      objectId: pin._id,
+      objectType: 'pinsYourPin',
+    });
+
+    return result;
   },
 });
 
@@ -339,10 +349,19 @@ const like = new ValidatedMethod({
       );
     }
 
-    return Pins.update(
+    const result = Pins.update(
       { _id: pinId },
       { $addToSet: { likes: this.userId } }
     );
+
+    insertNotification.call({
+      userId: pin.userId,
+      senderId: this.userId,
+      objectId: pin._id,
+      objectType: 'likesYourPin',
+    });
+
+    return result;
   },
 });
 
