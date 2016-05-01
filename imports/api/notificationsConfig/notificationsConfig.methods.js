@@ -1,16 +1,16 @@
-// import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Notifications } from './notifications.js';
+import { NotificationsConfig } from './notificationsConfig.collection.js';
+
+NotificationsConfig.methods = NotificationsConfig.methods || {};
 
 /*
- * TODO:
- * Attach method to a namespace, like Notifications.methods.insert
+ * TODO: Attach method to a namespace, like NotificationsConfig.methods.insert
  */
-const insert = new ValidatedMethod({
+NotificationsConfig.methods.insert = new ValidatedMethod({
   // The name of the method, sent over the wire. Same as the key provided
   // when calling Meteor.methods
-  name: 'Notifications.methods.insert',
+  name: 'NotificationsConfig.methods.insert',
   // Validation function for the arguments. Only keyword arguments are accepted,
   // so the arguments are an object rather than an array. The SimpleSchema validator
   // throws a ValidationError from the mdg:validation-error package if the args don't
@@ -24,28 +24,12 @@ const insert = new ValidatedMethod({
       type: String,
       regEx: [SimpleSchema.RegEx.Id],
     },
-    senderId: {
-      type: String,
-      regEx: [SimpleSchema.RegEx.Id],
-    },
-    objectId: {
-      type: String,
-      regEx: [SimpleSchema.RegEx.Id],
-    },
-    objectType: {
-      type: String,
-    },
   }).validator(),
   // This is the body of the method. Use ES2015 object destructuring to get
   // the keyword arguments
-  run({ userId, senderId, objectId, objectType }) {
-    return Notifications.insert({
-      userId,
-      senderId,
-      objectId,
-      objectType,
-    });
+  run({ userId }) {
+    return NotificationsConfig.insert({ userId });
   },
 });
 
-export { insert };
+export { NotificationsConfig };

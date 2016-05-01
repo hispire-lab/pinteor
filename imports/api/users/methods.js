@@ -2,15 +2,24 @@ import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Users } from './users.js';
+import { Accounts } from 'meteor/accounts-base';
+import { NotificationsConfig } from '../notificationsConfig/notificationsConfig.js';
+
+/* eslint-disable func-names, prefer-arrow-callback */
+Accounts.onCreateUser(function (options, doc) {
+  const user = doc;
+  NotificationsConfig.methods.insert.call({ userId: user._id });
+  return user;
+});
 
 /*
  * TODO:
  * Attach method to a namespace, like Users.methods.follow
  */
-const follow = new ValidatedMethod({
+const followUser = new ValidatedMethod({
   // The name of the method, sent over the wire. Same as the key provided
   // when calling Meteor.methods
-  name: 'Users.methods.follow',
+  name: 'Users.methods.followUser',
   // Validation function for the arguments. Only keyword arguments are accepted,
   // so the arguments are an object rather than an array. The SimpleSchema validator
   // throws a ValidationError from the mdg:validation-error package if the args don't
@@ -50,12 +59,12 @@ const follow = new ValidatedMethod({
      */
     Users.update(
       { _id: dstUserId },
-      { $addToSet: { followers: this.userId } }
+      { $addToSet: { usersFollowers: this.userId } }
     );
 
     return Users.update(
       { _id: this.userId },
-      { $addToSet: { following: dstUserId } }
+      { $addToSet: { usersFollowing: dstUserId } }
     );
   },
 });
@@ -64,10 +73,10 @@ const follow = new ValidatedMethod({
  * TODO:
  * Attach method to a namespace, like Users.methods.unfollow
  */
-const unfollow = new ValidatedMethod({
+const unfollowUser = new ValidatedMethod({
   // The name of the method, sent over the wire. Same as the key provided
   // when calling Meteor.methods
-  name: 'Users.methods.unfollow',
+  name: 'Users.methods.unfollowUser',
   // Validation function for the arguments. Only keyword arguments are accepted,
   // so the arguments are an object rather than an array. The SimpleSchema validator
   // throws a ValidationError from the mdg:validation-error package if the args don't
@@ -107,14 +116,14 @@ const unfollow = new ValidatedMethod({
      */
     Users.update(
       { _id: dstUserId },
-      { $pull: { followers: this.userId } }
+      { $pull: { usersFollowers: this.userId } }
     );
 
     return Users.update(
       { _id: this.userId },
-      { $pull: { following: dstUserId } }
+      { $pull: { usersFollowing: dstUserId } }
     );
   },
 });
 
-export { follow, unfollow };
+export { followUser, unfollowUser };

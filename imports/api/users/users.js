@@ -29,11 +29,11 @@ Users.schema = new SimpleSchema({
     type: Date,
     optional: true,
   },
-  following: {
+  usersFollowing: {
     type: [SimpleSchema.RegEx.Id],
     optional: true,
   },
-  followers: {
+  usersFollowers: {
     type: [SimpleSchema.RegEx.Id],
     optional: true,
   },

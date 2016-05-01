@@ -8,12 +8,12 @@ import '../fixtures.tests.js';
 import { Random } from 'meteor/random';
 import faker from 'faker';
 import { Users } from './users.js';
-import { follow, unfollow } from './methods.js';
+import { followUser, unfollowUser } from './methods.js';
 
 
 if (Meteor.isServer) {
   describe('Users.methods', function () {
-    describe('Users.methods.follow', function () {
+    describe('Users.methods.followUser', function () {
       beforeEach(function () {
         resetDatabase();
       });
@@ -21,17 +21,17 @@ if (Meteor.isServer) {
         const srcUser = Factory.create('user');
 
         chai.assert.throws(() => {
-          follow._execute({ userId: srcUser._id }, { dstUserId: Random.id() });
+          followUser._execute({ userId: srcUser._id }, { dstUserId: Random.id() });
         }, Meteor.Error, /Cannot follow a non existing user./);
       });
       it('should follow another user', function () {
         const srcUser = Factory.create('user', { username: faker.internet.userName() });
         const dstUser = Factory.create('user', { username: faker.internet.userName() });
 
-        follow._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
+        followUser._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
 
         chai.assert.equal(
-          Users.findOne({ _id: srcUser._id, following: dstUser._id })._id,
+          Users.findOne({ _id: srcUser._id, usersFollowing: dstUser._id })._id,
           srcUser._id
         );
       });
@@ -39,15 +39,15 @@ if (Meteor.isServer) {
         const srcUser = Factory.create('user', { username: faker.internet.userName() });
         const dstUser = Factory.create('user', { username: faker.internet.userName() });
 
-        follow._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
+        followUser._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
 
         chai.assert.equal(
-          Users.findOne({ _id: dstUser._id, followers: srcUser._id })._id,
+          Users.findOne({ _id: dstUser._id, usersFollowers: srcUser._id })._id,
           dstUser._id
         );
       });
     });
-    describe('Users.methods.unfollow', function () {
+    describe('Users.methods.unfollowUser', function () {
       beforeEach(function () {
         resetDatabase();
       });
@@ -55,29 +55,29 @@ if (Meteor.isServer) {
         const srcUser = Factory.create('user');
 
         chai.assert.throws(() => {
-          unfollow._execute({ userId: srcUser._id }, { dstUserId: Random.id() });
+          unfollowUser._execute({ userId: srcUser._id }, { dstUserId: Random.id() });
         }, Meteor.Error, /Cannot unfollow a non existing user./);
       });
       it('should unfollow another user', function () {
         const srcUser = Factory.create('user', { username: faker.internet.userName() });
         const dstUser = Factory.create('user', { username: faker.internet.userName() });
-        follow._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
+        followUser._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
 
-        unfollow._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
+        unfollowUser._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
 
         chai.assert.isUndefined(
-          Users.findOne({ id: srcUser._id, following: dstUser._id })
+          Users.findOne({ id: srcUser._id, usersFollowing: dstUser._id })
         );
       });
       it('should unfollow another user an not be a follower.', function () {
         const srcUser = Factory.create('user', { username: faker.internet.userName() });
         const dstUser = Factory.create('user', { username: faker.internet.userName() });
-        follow._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
+        followUser._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
 
-        unfollow._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
+        unfollowUser._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
 
         chai.assert.isUndefined(
-          Users.findOne({ _id: dstUser._id, followers: srcUser._id })
+          Users.findOne({ _id: dstUser._id, usersFollowers: srcUser._id })
         );
       });
     });

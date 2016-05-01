@@ -3,7 +3,7 @@ import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Pins } from './pins.js';
 import { Boards } from '../boards/boards.js';
-import { insert as insertNotification } from '../notifications/methods.js';
+import { Notifications } from '../notifications/notifications.js';
 
 /*
  * TODO: Attach method to a namespace, like Pins.methods.insert
@@ -290,7 +290,7 @@ const save = new ValidatedMethod({
       description: pin.description,
     });
 
-    insertNotification.call({
+    Notifications.methods.insert.call({
       userId: pin.userId,
       senderId: this.userId,
       objectId: pin._id,
@@ -354,7 +354,7 @@ const like = new ValidatedMethod({
       { $addToSet: { likes: this.userId } }
     );
 
-    insertNotification.call({
+    Notifications.methods.insert.call({
       userId: pin.userId,
       senderId: this.userId,
       objectId: pin._id,

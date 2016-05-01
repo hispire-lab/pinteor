@@ -8,6 +8,7 @@ import { Random } from 'meteor/random';
 import faker from 'faker';
 import { Factory } from 'meteor/dburles:factory';
 import '../fixtures.tests.js';
+import { stubInsertNotification } from '../stubs.tests.js';
 import { Pins } from './pins.js';
 import { insert, setPinData, move, copy, save, like, unlike } from './methods.js';
 
@@ -372,6 +373,7 @@ if (Meteor.isServer) {
         }, Meteor.Error, /Cannot save a pin to a board that is not yours./);
       });
       it('should save a pin to a board', function () {
+        const insertNotificationStub = stubInsertNotification();
         const userAnother = Factory.create('user', { username: faker.internet.userName() });
         const user = Factory.create('user');
         const fromBoard = Factory.create('board', {
@@ -400,6 +402,8 @@ if (Meteor.isServer) {
         chai.assert.equal(fromPin.imgUrl, copiedPin.imgUrl);
         chai.assert.equal(fromPin.description, copiedPin.description);
         chai.assert.equal(toBoard.isPrivate, copiedPin.isPrivate);
+
+        insertNotificationStub.restore();
       });
     });
     describe('Pins.methods.like', function () {
@@ -426,6 +430,7 @@ if (Meteor.isServer) {
         }, Meteor.Error, /Cannot like a non existing pin./);
       });
       it('should like a pin.', function () {
+        const insertNotificationStub = stubInsertNotification();
         const userAnother = Factory.create('user', { username: faker.internet.userName() });
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
@@ -441,8 +446,11 @@ if (Meteor.isServer) {
           Pins.findOne({ _id: pinId, likes: userAnother._id })._id,
           pinId
         );
+
+        insertNotificationStub.restore();
       });
       it('should increase likes count when different users likes a pin', function () {
+        const insertNotificationStub = stubInsertNotification();
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
 
@@ -461,8 +469,11 @@ if (Meteor.isServer) {
 
         like._execute({ userId: Random.id() }, { pinId });
         chai.assert.equal(3, Pins.findOne({ _id: pinId }).likesCount);
+
+        insertNotificationStub.restore();
       });
       it('should increase likes count once when same user likes a pin many times', function () {
+        const insertNotificationStub = stubInsertNotification();
         const userAnother = Factory.create('user', { username: faker.internet.userName() });
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
@@ -482,6 +493,8 @@ if (Meteor.isServer) {
 
         like._execute({ userId: userAnother._id }, { pinId });
         chai.assert.equal(1, Pins.findOne({ _id: pinId }).likesCount);
+
+        insertNotificationStub.restore();
       });
     });
     describe('Pins.methods.unlike', function () {
@@ -509,6 +522,7 @@ if (Meteor.isServer) {
         }, Meteor.Error, /Cannot unlike a non existing pin./);
       });
       it('should unlike a pin.', function () {
+        const insertNotificationStub = stubInsertNotification();
         const userAnother = Factory.create('user', { username: faker.internet.userName() });
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
@@ -522,8 +536,11 @@ if (Meteor.isServer) {
         const isTrue = unlike._execute({ userId: userAnother._id }, { pinId });
         chai.assert.equal(true, isTrue);
         chai.assert.isUndefined(Pins.findOne({ _id: pinId, likes: userAnother._id }));
+
+        insertNotificationStub.restore();
       });
       it('should decrease likes count when different users unlikes a pin', function () {
+        const insertNotificationStub = stubInsertNotification();
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
 
@@ -549,8 +566,11 @@ if (Meteor.isServer) {
 
         unlike._execute({ userId: user3._id }, { pinId });
         chai.assert.equal(0, Pins.findOne({ _id: pinId }).likesCount);
+
+        insertNotificationStub.restore();
       });
       it('should decrease likes count once when same user unlikes a pin many times', function () {
+        const insertNotificationStub = stubInsertNotification();
         const user = Factory.create('user');
         const board = Factory.create('board', { userId: user._id });
 
@@ -575,6 +595,8 @@ if (Meteor.isServer) {
 
         unlike._execute({ userId: user1._id }, { pinId });
         chai.assert.equal(2, Pins.findOne({ _id: pinId }).likesCount);
+
+        insertNotificationStub.restore();
       });
     });
   });
