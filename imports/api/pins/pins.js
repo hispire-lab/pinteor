@@ -5,6 +5,9 @@ import isPrivateDenormalizer from '../boards/isPrivateDenormalizer.js';
 import likesCountDenormalizer from './likesCountDenormalizer.js';
 import uuid from 'uuid';
 
+/*
+ * TODO: add a commentsCount denormalizer.
+ */
 class PinsCollection extends Mongo.Collection {
 
   insert(doc, callback) {
@@ -12,6 +15,7 @@ class PinsCollection extends Mongo.Collection {
     pin.createdAt = pin.createdAt || new Date();
     pin.title = pin.title || uuid.v4();
     pin.likesCount = pin.likesCount || 0;
+    pin.commentsCount = pin.commentsCount || 0;
     const result = super.insert(pin, callback);
     return result;
   }
@@ -80,6 +84,9 @@ Pins.schema = new SimpleSchema({
     optional: true,
   },
   likesCount: {
+    type: Number,
+  },
+  commentsCount: {
     type: Number,
   },
 });
