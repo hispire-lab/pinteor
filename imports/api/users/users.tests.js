@@ -139,7 +139,7 @@ if (Meteor.isServer) {
         const userAnother = Factory.create('user', { username: faker.internet.userName() });
         const userId = Accounts.createUser({
           username: faker.internet.userName(),
-          password: 'password',
+          // password: 'password',
         });
         const board = Factory.create('board', { userId });
         const pin = Factory.create('pin', { userId, boardId: board._id });

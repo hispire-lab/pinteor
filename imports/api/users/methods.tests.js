@@ -5,6 +5,7 @@ import { resetDatabase } from 'meteor/xolvio:cleaner';
 import { chai } from 'meteor/practicalmeteor:chai';
 import { Factory } from 'meteor/dburles:factory';
 import '../fixtures.tests.js';
+import { stubInsertNotification } from '../stubs.tests.js';
 import { Random } from 'meteor/random';
 import faker from 'faker';
 import { Users } from './users.js';
@@ -25,6 +26,7 @@ if (Meteor.isServer) {
         }, Meteor.Error, /Cannot follow a non existing user./);
       });
       it('should follow another user', function () {
+        const insertNotificationStub = stubInsertNotification();
         const srcUser = Factory.create('user', { username: faker.internet.userName() });
         const dstUser = Factory.create('user', { username: faker.internet.userName() });
 
@@ -34,8 +36,10 @@ if (Meteor.isServer) {
           Users.findOne({ _id: srcUser._id, usersFollowing: dstUser._id })._id,
           srcUser._id
         );
+        insertNotificationStub.restore();
       });
       it('should follow another user and be a follower', function () {
+        const insertNotificationStub = stubInsertNotification();
         const srcUser = Factory.create('user', { username: faker.internet.userName() });
         const dstUser = Factory.create('user', { username: faker.internet.userName() });
 
@@ -45,6 +49,8 @@ if (Meteor.isServer) {
           Users.findOne({ _id: dstUser._id, usersFollowers: srcUser._id })._id,
           dstUser._id
         );
+
+        insertNotificationStub.restore();
       });
     });
     describe('Users.methods.unfollowUser', function () {
@@ -59,6 +65,7 @@ if (Meteor.isServer) {
         }, Meteor.Error, /Cannot unfollow a non existing user./);
       });
       it('should unfollow another user', function () {
+        const insertNotificationStub = stubInsertNotification();
         const srcUser = Factory.create('user', { username: faker.internet.userName() });
         const dstUser = Factory.create('user', { username: faker.internet.userName() });
         followUser._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
@@ -68,8 +75,11 @@ if (Meteor.isServer) {
         chai.assert.isUndefined(
           Users.findOne({ id: srcUser._id, usersFollowing: dstUser._id })
         );
+
+        insertNotificationStub.restore();
       });
       it('should unfollow another user an not be a follower.', function () {
+        const insertNotificationStub = stubInsertNotification();
         const srcUser = Factory.create('user', { username: faker.internet.userName() });
         const dstUser = Factory.create('user', { username: faker.internet.userName() });
         followUser._execute({ userId: srcUser._id }, { dstUserId: dstUser._id });
@@ -79,6 +89,8 @@ if (Meteor.isServer) {
         chai.assert.isUndefined(
           Users.findOne({ _id: dstUser._id, usersFollowers: srcUser._id })
         );
+
+        insertNotificationStub.restore();
       });
     });
   });

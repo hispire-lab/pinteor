@@ -6,6 +6,8 @@ class NotificationsConfigCollection extends Mongo.Collection {
     const config = doc;
     config.pinsYourPin = config.pinsYourPin || true;
     config.likesYourPin = config.likesYourPin || true;
+    config.userFollowsYou = config.userFollowsYou || true;
+    config.followsYourBoard = config.followsYourBoard || true;
     const result = super.insert(config, callback);
     return result;
   }
@@ -22,6 +24,12 @@ NotificationsConfig.Schema = new SimpleSchema({
     type: Boolean,
   },
   likesYourPin: {
+    type: Boolean,
+  },
+  userFollowsYou: {
+    type: Boolean,
+  },
+  followsYourBoard: {
     type: Boolean,
   },
 });

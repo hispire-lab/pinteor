@@ -37,6 +37,16 @@ Users.schema = new SimpleSchema({
     type: [SimpleSchema.RegEx.Id],
     optional: true,
   },
+  boardsFollowing: {
+    type: [SimpleSchema.RegEx.Id],
+    optional: true,
+  },
+  /*
+  boardsFollowers: {
+    type: [SimpleSchema.RegEx.Id],
+    optional: true,
+  },
+  */
   likesCount: {
     type: Number,
     optional: true,
