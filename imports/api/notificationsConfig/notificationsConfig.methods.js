@@ -80,8 +80,6 @@ NotificationsConfig.methods.setData = new ValidatedMethod({
     /*
      * NOTE: should i remove notifications if i set i to false or
      * just not show them?
-     *
-     *
      */
     return NotificationsConfig.update(
       { userId: this.userId },
