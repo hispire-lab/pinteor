@@ -68,3 +68,5 @@ Comments.methods.insert = new ValidatedMethod({
     return Comments.insert(newComment);
   },
 });
+
+export { Comments };

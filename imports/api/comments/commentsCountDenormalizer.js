@@ -3,7 +3,7 @@
 // import { R } from 'meteor/ramda:ramda';
 // import { check, Match } from 'meteor/check';
 import { Comments } from './comments.js';
-import { Pins } from './pins.js';
+import { Pins } from '../pins/pins.js';
 // import { Users } from '../users/users.js';
 
 const commentsCountDenormalizer = {
