@@ -9,6 +9,12 @@ class CommentsCollection extends Mongo.Collection {
     commentsCountDenormalizer.afterInsertComment(comment);
     return result;
   }
+  remove(selector, callback) {
+    const comment = this.findOne({ _id: selector._id });
+    const result = super.remove(selector, callback);
+    commentsCountDenormalizer.afterRemoveComment(comment);
+    return result;
+  }
 }
 
 const Comments = new CommentsCollection('Comments');

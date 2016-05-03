@@ -71,5 +71,45 @@ if (Meteor.isServer) {
         chai.assert.equal('comment text', comment.text);
       });
     });
+    describe('Comments.methods.remove', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      it('should not remove a comment if user is not logged in', function () {
+        const user = Factory.create('user');
+        const board = Factory.create('board', { userId: user._id });
+        const pin = Factory.create('pin', { userId: user._id, boardId: board._id });
+        const comment = Factory.create('comment', {
+          authorId: user._id,
+          authorName: user.username,
+          pinId: pin._id,
+        });
+
+        chai.assert.throws(() => {
+          Comments.methods.remove._execute({}, { commentId: comment._id });
+        }, Meteor.Error, /Must be logged in to remove a pin./);
+      });
+      it('should not remove a comment if the comment does not exists', function () {
+        const user = Factory.create('user');
+
+        chai.assert.throws(() => {
+          Comments.methods.remove._execute({ userId: user._id }, { commentId: Random.id() });
+        }, Meteor.Error, /Cannot remove a non existing comment./);
+      });
+      it('should remove a comment', function () {
+        const user = Factory.create('user');
+        const board = Factory.create('board', { userId: user._id });
+        const pin = Factory.create('pin', { userId: user._id, boardId: board._id });
+        const comment = Factory.create('comment', {
+          authorId: user._id,
+          authorName: user.username,
+          pinId: pin._id,
+        });
+
+        Comments.methods.remove._execute({ userId: user._id }, { commentId: comment._id });
+
+        chai.assert.isUndefined(Comments.findOne({ _id: comment._id }));
+      });
+    });
   });
 }

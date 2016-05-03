@@ -2,6 +2,7 @@ import faker from 'faker';
 import { Users } from './users/users.js';
 import { Boards } from './boards/boards.js';
 import { Pins } from './pins/pins.js';
+import { Comments } from './comments/comments.js';
 import { Factory } from 'meteor/dburles:factory';
 
 /*
@@ -48,4 +49,8 @@ Factory.define('pin', Pins, {
   imgUrl: faker.image.imageUrl(),
   createdAt: new Date(),
   isPrivate: false,
+});
+
+Factory.define('comment', Comments, {
+  text: faker.lorem.sentence(),
 });

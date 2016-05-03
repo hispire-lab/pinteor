@@ -20,6 +20,10 @@ const commentsCountDenormalizer = {
     this._updatePinCommentsCount(comment.pinId);
   },
 
+  afterRemoveComment(comment) {
+    this._updatePinCommentsCount(comment.pinId);
+  },
+
 };
 
 export default commentsCountDenormalizer;

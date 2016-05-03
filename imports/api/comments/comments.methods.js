@@ -69,4 +69,48 @@ Comments.methods.insert = new ValidatedMethod({
   },
 });
 
+Comments.methods.remove = new ValidatedMethod({
+  // The name of the method, sent over the wire. Same as the key provided
+  // when calling Meteor.methods
+  name: 'Comments.methods.remove',
+  // Validation function for the arguments. Only keyword arguments are accepted,
+  // so the arguments are an object rather than an array. The SimpleSchema validator
+  // throws a ValidationError from the mdg:validation-error package if the args don't
+  // match the schema
+  //
+  // This Method encodes the form validation requirements.
+  // By defining them in the Method, we do client and server-side
+  // validation in one place.
+  validate: new SimpleSchema({
+    commentId: {
+      type: String,
+      regEx: SimpleSchema.RegEx.Id,
+    },
+  }).validator(),
+  // This is the body of the method. Use ES2015 object destructuring to get
+  // the keyword arguments
+  run({ commentId }) {
+    if (!this.userId) {
+      throw new Meteor.Error(
+        'Comments.methods.insert.not-logged-in',
+        'Must be logged in to remove a pin.'
+      );
+    }
+
+    const comment = Comments.findOne({ _id: commentId });
+    if (!comment) {
+      throw new Meteor.Error(
+        'Comments.methods.insert.not-found',
+        'Cannot remove a non existing comment.'
+      );
+    }
+
+    /*
+     * FIXME: should i not allow remove a comment for a private pin?
+     */
+
+    return Comments.remove({ _id: commentId });
+  },
+});
+
 export { Comments };
