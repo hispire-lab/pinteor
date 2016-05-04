@@ -10,7 +10,7 @@ import { Factory } from 'meteor/dburles:factory';
 import '../fixtures.tests.js';
 import { stubInsertNotification } from '../stubs.tests.js';
 import { Pins } from './pins.js';
-import { insert, setPinData, move, copy, save, like, unlike } from './methods.js';
+import { insert, remove, setPinData, move, copy, save, like, unlike } from './methods.js';
 
 if (Meteor.isServer) {
   describe('Pins.methods', function () {
@@ -91,6 +91,36 @@ if (Meteor.isServer) {
         });
 
         chai.assert.equal(false, Pins.findOne({ _id: pinId }).isPrivate);
+      });
+    });
+    describe('Pins.methods.remove', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      it('should not remove a pin if user is not logged in', function () {
+        const user = Factory.create('user');
+        const board = Factory.create('board', { userId: user._id });
+        const pin = Factory.create('pin', { userId: user._id, boardId: board._id });
+
+        chai.assert.throws(() => {
+          remove._execute({}, { pinId: pin._id });
+        }, Meteor.Error, /Must be logged in to remove a pin./);
+      });
+      it('should not remove a pin if the pin does not exists', function () {
+        const user = Factory.create('user');
+
+        chai.assert.throws(() => {
+          remove._execute({ userId: user._id }, { pinId: Random.id() });
+        }, Meteor.Error, /Cannot remove a non existing pin./);
+      });
+      it('should remove a pin', function () {
+        const user = Factory.create('user');
+        const board = Factory.create('board', { userId: user._id });
+        const pin = Factory.create('pin', { userId: user._id, boardId: board._id });
+
+        remove._execute({ userId: user._id }, { pinId: pin._id });
+
+        chai.assert.isUndefined(Pins.findOne({ _id: pin._id }));
       });
     });
     describe('Pins.methods.setPinData', function () {

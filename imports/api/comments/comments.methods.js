@@ -93,7 +93,7 @@ Comments.methods.remove = new ValidatedMethod({
     if (!this.userId) {
       throw new Meteor.Error(
         'Comments.methods.insert.not-logged-in',
-        'Must be logged in to remove a pin.'
+        'Must be logged in to remove a comment.'
       );
     }
 

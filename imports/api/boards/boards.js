@@ -39,6 +39,7 @@ class BoardsCollection extends Mongo.Collection {
     }
 
     board.slug = slug(board.name);
+    board.pinsCount = board.pinsCount || 0;
     const result = super.insert(board, callback);
     return result;
   }
@@ -48,6 +49,19 @@ class BoardsCollection extends Mongo.Collection {
     return result;
   }
   remove(selector, callback) {
+    /*
+     * NOTE: maybe instead of remove the pins by the boardId
+     * will be nive to remove them thought the poin remove method.
+     *
+     * in order to do that is have to take all the pins with the boardId
+     * and take its ids, the loop over the ids calling the pin remove method
+     *
+     * i.e
+     * const pinIds = Pins.find({ boardId: selector._id }, { fields: { _id: 1 } }).fetch();
+     * pinIds.map((pinId) => Pins.methods.remove({ pinId }));
+     *
+     * see: pinsCountDenormalizer.afterRemovePin
+     */
     Pins.remove({ boardId: selector._id });
     return super.remove(selector, callback);
   }
@@ -60,24 +74,10 @@ Boards.schema = new SimpleSchema({
     type: String,
     min: 3,
     max: 10,
-    /*
-     * FIXME:
-     * this rule is not what we want, a board name should be unique
-     * within a given user, that means that two different users can
-     * have a board with same names.
-     */
-    // unique: true,
   },
   slug: {
     type: String,
     optional: true,
-    /*
-     * FIXME:
-     * this rule is not what we want, a board slug should be unique
-     * within a given user, that means that two different users can
-     * have a board with same slugs.
-     */
-    // unique: true,
   },
   description: {
     type: String,
@@ -92,6 +92,9 @@ Boards.schema = new SimpleSchema({
   },
   isPrivate: {
     type: Boolean,
+  },
+  pinsCount: {
+    type: Number,
   },
 });
 

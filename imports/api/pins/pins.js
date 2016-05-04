@@ -3,6 +3,7 @@ import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Boards } from '../boards/boards.js';
 import isPrivateDenormalizer from '../boards/isPrivateDenormalizer.js';
 import likesCountDenormalizer from './likesCountDenormalizer.js';
+import pinsCountDenormalizer from './pinsCountDenormalizer';
 import uuid from 'uuid';
 
 /*
@@ -17,6 +18,7 @@ class PinsCollection extends Mongo.Collection {
     pin.likesCount = pin.likesCount || 0;
     pin.commentsCount = pin.commentsCount || 0;
     const result = super.insert(pin, callback);
+    pinsCountDenormalizer.afterInsertPin(pin);
     return result;
   }
 
@@ -24,6 +26,13 @@ class PinsCollection extends Mongo.Collection {
     const result = super.update(selector, modifier);
     isPrivateDenormalizer.afterUpdatePin(selector, modifier);
     likesCountDenormalizer.afterUpdatePin(selector, modifier);
+    return result;
+  }
+
+  remove(selector, callback) {
+    const pin = this.findOne({ _id: selector._id });
+    const result = super.remove(selector, callback);
+    pinsCountDenormalizer.afterRemovePin(selector, pin);
     return result;
   }
 }

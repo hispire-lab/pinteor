@@ -87,7 +87,7 @@ if (Meteor.isServer) {
 
         chai.assert.throws(() => {
           Comments.methods.remove._execute({}, { commentId: comment._id });
-        }, Meteor.Error, /Must be logged in to remove a pin./);
+        }, Meteor.Error, /Must be logged in to remove a comment./);
       });
       it('should not remove a comment if the comment does not exists', function () {
         const user = Factory.create('user');
