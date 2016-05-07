@@ -32,3 +32,4 @@ accounts-base
 accounts-password
 # velocity:meteor-stubs
 # useful:collection-mocks
+reywood:publish-composite
