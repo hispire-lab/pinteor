@@ -34,3 +34,4 @@ accounts-password
 reywood:publish-composite
 react-meteor-data
 static-html
+kadira:flow-router
