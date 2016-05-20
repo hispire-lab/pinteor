@@ -53,6 +53,12 @@ Users.schema = new SimpleSchema({
     // FIXME: this should be moved to Accounts.onCreatedUser callback
     defaultValue: 0,
   },
+  boardsCount: {
+    type: Number,
+    optional: true,
+    // FIXME: this should be moved to Accounts.onCreatedUser callback
+    defaultValue: 0,
+  },
 });
 
 Users.attachSchema(Users.schema);

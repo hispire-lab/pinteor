@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import isPrivateDenormalizer from './isPrivateDenormalizer.js';
+import boardsCountDenormalizer from './boardsCountDenormalizer';
 import { Pins } from '../pins/pins.js';
 
 import slug from 'slug';
@@ -41,6 +42,7 @@ class BoardsCollection extends Mongo.Collection {
     board.slug = slug(board.name);
     board.pinsCount = board.pinsCount || 0;
     const result = super.insert(board, callback);
+    boardsCountDenormalizer.afterInsertBoard(board);
     return result;
   }
   update(selector, modifier) {
@@ -62,8 +64,11 @@ class BoardsCollection extends Mongo.Collection {
      *
      * see: pinsCountDenormalizer.afterRemovePin
      */
+    const board = this.findOne({ _id: selector._id });
     Pins.remove({ boardId: selector._id });
-    return super.remove(selector, callback);
+    const result = super.remove(selector, callback);
+    boardsCountDenormalizer.afterRemoveBoard(selector, board);
+    return result;
   }
 }
 

@@ -12,6 +12,7 @@ import { Users } from './users.js';
 import { Accounts } from 'meteor/accounts-base';
 import { NotificationsConfig } from '../notificationsConfig/notificationsConfig.js';
 import { like, unlike } from '../pins/methods.js';
+import { insert as boardInsert, remove as boardRemove } from '../boards/methods.js';
 
 if (Meteor.isServer) {
   describe('Users', function () {
@@ -123,6 +124,43 @@ if (Meteor.isServer) {
         chai.assert.equal(0, Users.findOne({ _id: user._id }).likesCount);
 
         insertNotificationStub.restore();
+      });
+    });
+    describe('Users.boardsCount', function () {
+      beforeEach(function () {
+        resetDatabase();
+      });
+      it('should increase boards count when different boards are inserted', function () {
+        const user = Factory.create('user');
+
+        chai.assert.equal(0, Users.findOne({ _id: user._id }).boardsCount);
+
+        boardInsert._execute({ userId: user._id }, { name: 'board A' });
+        chai.assert.equal(1, Users.findOne({ _id: user._id }).boardsCount);
+
+        boardInsert._execute({ userId: user._id }, { name: 'board B' });
+        chai.assert.equal(2, Users.findOne({ _id: user._id }).boardsCount);
+
+        boardInsert._execute({ userId: user._id }, { name: 'board C' });
+        chai.assert.equal(3, Users.findOne({ _id: user._id }).boardsCount);
+      });
+      it('should decrease boards count when different boards are remove', function () {
+        const user = Factory.create('user');
+
+        const board1 = Factory.create('board', { userId: user._id, name: 'board A' });
+        const board2 = Factory.create('board', { userId: user._id, name: 'board B' });
+        const board3 = Factory.create('board', { userId: user._id, name: 'board C' });
+
+        chai.assert.equal(3, Users.findOne({ _id: user._id }).boardsCount);
+
+        boardRemove._execute({ userId: user._id }, { boardId: board1._id });
+        chai.assert.equal(2, Users.findOne({ _id: user._id }).boardsCount);
+
+        boardRemove._execute({ userId: user._id }, { boardId: board2._id });
+        chai.assert.equal(1, Users.findOne({ _id: user._id }).boardsCount);
+
+        boardRemove._execute({ userId: user._id }, { boardId: board3._id });
+        chai.assert.equal(0, Users.findOne({ _id: user._id }).boardsCount);
       });
     });
     describe('Users.helpers.unread', function () {

@@ -13,6 +13,9 @@ import { insert as pinInsert, remove as pinRemove } from '../pins/methods.js';
 
 if (Meteor.isServer) {
   describe('Boards.helpers', function () {
+    /*
+     * FIXME: should i move this to pins.tests ?
+     */
     describe('Pins.commentsCount', function () {
       beforeEach(function () {
         resetDatabase();

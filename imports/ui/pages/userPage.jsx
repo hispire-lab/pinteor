@@ -5,8 +5,10 @@ import BoardPreview from '../components/boardPreview/boardPreview.jsx';
 
 class UserPage extends React.Component {
   render() {
-    const { user, userExists, boards } = this.props;
-    if (!userExists) {
+    const { user, userExists, boards, loading } = this.props;
+    if (loading) {
+      return (<div>loading...</div>);
+    } else if (!userExists) {
       return (<div>Not found</div>);
     }
     /* NOTE: warning.js:44 Warning: Each child in an array or iterator should have a
