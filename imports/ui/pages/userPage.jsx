@@ -18,6 +18,7 @@ class UserPage extends React.Component {
     const Boards = boards.map(board => (
       <BoardPreview
         key={board._id}
+        _id={board._id}
         name={board.name}
         pinsCount={board.pinsCount}
         description={board.description}
@@ -28,7 +29,9 @@ class UserPage extends React.Component {
       <div>
         <h1>User Page</h1>
         <p>user name: {user.username}</p>
+        <p>user boards count: {user.boardsCount}</p>
         <p>user likes count: {user.likesCount}</p>
+
         {Boards}
       </div>
     );

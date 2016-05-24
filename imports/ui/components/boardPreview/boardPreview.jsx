@@ -1,11 +1,24 @@
 import React from 'react';
+/* eslint-disable no-unused-vars */
+import BoardEditForm from '../boardEditForm/boardEditForm.jsx';
+/* eslint-enable no-unused-vars */
 
 class BoardPreview extends React.Component {
   constructor(props) {
     super(props);
-    this.editBoard = this.editBoard.bind(this);
+    this.state = {
+      showEditBoardForm: false,
+    };
+
+    this.toggleEditBoardForm = this.toggleEditBoardForm.bind(this);
   }
-  editBoard(e) {}
+  // display and hides board edit form
+  toggleEditBoardForm() {
+    this.setState({
+      showEditBoardForm: !this.state.showEditBoardForm,
+    });
+  }
+
   render() {
     const { name, pinsCount, description } = this.props;
     return (
@@ -15,10 +28,12 @@ class BoardPreview extends React.Component {
         <p>{description}</p>
         <button
           type="button"
-          onClick={this.editBoard}
+          onClick={this.toggleEditBoardForm}
         >
           Edit
         </button>
+
+        {this.state.showEditBoardForm ? <BoardEditForm {...this.props} /> : null}
       </div>
     );
   }

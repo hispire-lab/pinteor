@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { Users } from '../imports/api/users/users.js';
 import { Boards } from '../imports/api/boards/boards.js';
+import '../imports/api/boards/methods.js';
 import '../imports/api/users/server/publications';
 
 import faker from 'faker';

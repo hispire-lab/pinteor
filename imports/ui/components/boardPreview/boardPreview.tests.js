@@ -23,11 +23,11 @@ if (Meteor.isClient) {
       chai.assert.equal('nice board', wrapper.props().description);
     });
     it('calls editBoard when click in edit button', function () {
-      const editBoardSpy = sinon.spy(BoardPreview.prototype, 'editBoard');
+      const toggleEditBoardFormSpy = sinon.spy(BoardPreview.prototype, 'toggleEditBoardForm');
       const wrapper = mount(<BoardPreview />);
       wrapper.find('button').simulate('click');
-      chai.assert.isTrue(editBoardSpy.calledOnce);
-      editBoardSpy.restore();
+      chai.assert.isTrue(toggleEditBoardFormSpy.calledOnce);
+      toggleEditBoardFormSpy.restore();
     });
   });
 }
