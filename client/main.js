@@ -11,7 +11,7 @@ import { mount } from 'react-mounter';
 import UserContainer from '../imports/ui/containers/userContainer.js';
 /* eslint-enable no-unused-vars */
 import AppLayout from '../imports/ui/layouts/appLayout.jsx';
-
+import '../imports/startup/client/accounts-config.js';
 
 FlowRouter.route('/:username', {
   name: 'userPage',

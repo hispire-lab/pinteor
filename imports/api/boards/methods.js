@@ -186,19 +186,16 @@ const setName = new ValidatedMethod({
   run({ newName, boardId }) {
     // `this` is the same method invocation object you normally get inside
     // Meteor.methods
-    /*
     if (!this.userId) {
       throw new Meteor.Error(
         'Boards.methods.setName.not-logged-in',
         'Must be logged in to change the name of a board.'
       );
     }
-    */
     /*
      * TODO:
      * maybe should check if not exists a board with the given id.
      */
-    /*
     const board = Boards.findOne({ _id: boardId });
     if (!board.editableBy(this.userId)) {
       throw new Meteor.Error(
@@ -206,7 +203,6 @@ const setName = new ValidatedMethod({
         'Cannot change the name of a board that is not yours.'
       );
     }
-    */
     Boards.update({ _id: boardId }, { $set: { name: newName } });
   },
 });

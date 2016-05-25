@@ -33,5 +33,6 @@ accounts-password
 # useful:collection-mocks
 reywood:publish-composite
 react-meteor-data
-static-html
 kadira:flow-router
+accounts-ui
+blaze-html-templates

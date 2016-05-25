@@ -2,6 +2,9 @@ import React from 'react';
 /* eslint-disable no-unused-vars */
 import BoardPreview from '../components/boardPreview/boardPreview.jsx';
 /* eslint-enable no-unused-vars */
+/* eslint-disable no-unused-vars */
+import AccountsUIWrapper from '../components/accountsUIWrapper/accountsUIWrapper.jsx';
+/* eslint-enable no-unused-vars */
 
 class UserPage extends React.Component {
   render() {
@@ -27,6 +30,7 @@ class UserPage extends React.Component {
 
     return (
       <div>
+        <AccountsUIWrapper />
         <h1>User Page</h1>
         <p>user name: {user.username}</p>
         <p>user boards count: {user.boardsCount}</p>
