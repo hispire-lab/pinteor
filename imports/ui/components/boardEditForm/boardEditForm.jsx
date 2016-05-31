@@ -1,5 +1,6 @@
 import React from 'react';
 import { setName } from '../../../api/boards/methods.js';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 class BoardEditForm extends React.Component {
 
@@ -7,7 +8,12 @@ class BoardEditForm extends React.Component {
     super(props);
 
     this.handleName = this.handleName.bind(this);
+    this.handleDescription = this.handleDescription.bind(this);
     this.save = this.save.bind(this);
+
+    this.state = {
+      errors: {},
+    };
   }
 
   delete() {}
@@ -22,7 +28,47 @@ class BoardEditForm extends React.Component {
   }
 
   handleName(event) {
-    this.setState({ name: event.target.value });
+    let error;
+    try {
+      new SimpleSchema({
+        newName: {
+          type: String,
+          max: 10,
+        },
+      }).validate({
+        newName: event.target.value,
+      });
+    } catch (e) {
+      error = e;
+    } finally {
+      if (error) {
+        this.setState({ errors: { name: error.reason } });
+      } else {
+        this.setState({ errors: { name: '' } });
+      }
+    }
+  }
+
+  handleDescription(event) {
+    let error;
+    try {
+      new SimpleSchema({
+        description: {
+          type: String,
+          min: 5,
+        },
+      }).validate({
+        description: event.target.value,
+      });
+    } catch (e) {
+      error = e;
+    } finally {
+      if (error) {
+        this.setState({ errors: { description: error.reason } });
+      } else {
+        this.setState({ errors: { description: '' } });
+      }
+    }
   }
 
   render() {
@@ -31,13 +77,22 @@ class BoardEditForm extends React.Component {
     return (
       <div>
         <h1>Edit a board</h1>
+
+        <p>{this.state.errors.name}</p>
         <input
           type="text"
           name="name"
           defaultValue={name}
           onChange={this.handleName}
         />
-        <input type="text" name="description" defaultValue={description} />
+
+      <p>{this.state.errors.description}</p>
+        <input
+          type="text"
+          name="description"
+          defaultValue={description}
+          onChange={this.handleDescription}
+        />
 
         <button type="button" onClick={this.delete}>
           Delete
