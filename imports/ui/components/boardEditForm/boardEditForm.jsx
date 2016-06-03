@@ -1,4 +1,5 @@
 import React from 'react';
+import { _ } from 'underscore';
 import { setName } from '../../../api/boards/methods.js';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
@@ -8,26 +9,34 @@ class BoardEditForm extends React.Component {
     super(props);
 
     this.handleName = this.handleName.bind(this);
-    this.handleDescription = this.handleDescription.bind(this);
-    this.save = this.save.bind(this);
+
+    this.oldProps = {};
+    this.oldProps.name = this.props.name;
 
     this.state = {
       errors: {},
+      name: this.props.name,
     };
-  }
 
-  delete() {}
-
-  cancel() {}
-
-  save() {
-    setName.call({
-      boardId: this.props._id,
-      newName: this.state.name,
-    });
+    this.throttledUpdateName = _.throttle((value) => {
+      if (this.oldProps.name !== value) {
+        setName.call({
+          boardId: this.props._id,
+          newName: value,
+        }, err => {
+          if (err) {
+            this.setState({ errors: { name: err.reason } });
+          } else {
+            this.oldProps.name = value;
+            this.setState({ errors: { name: '' } });
+          }
+        });
+      }
+    }, 300);
   }
 
   handleName(event) {
+    const value = event.target.value.trim();
     let error;
     try {
       new SimpleSchema({
@@ -36,44 +45,23 @@ class BoardEditForm extends React.Component {
           max: 10,
         },
       }).validate({
-        newName: event.target.value,
+        newName: value,
       });
     } catch (e) {
       error = e;
     } finally {
       if (error) {
-        this.setState({ errors: { name: error.reason } });
+        this.setState({
+          errors: { name: error.reason },
+          name: value,
+        });
       } else {
-        this.setState({ errors: { name: '' } });
-      }
-    }
-  }
-
-  handleDescription(event) {
-    let error;
-    try {
-      new SimpleSchema({
-        description: {
-          type: String,
-          min: 5,
-        },
-      }).validate({
-        description: event.target.value,
-      });
-    } catch (e) {
-      error = e;
-    } finally {
-      if (error) {
-        this.setState({ errors: { description: error.reason } });
-      } else {
-        this.setState({ errors: { description: '' } });
+        this.throttledUpdateName(value);
       }
     }
   }
 
   render() {
-    const { name, description } = this.props;
-
     return (
       <div>
         <h1>Edit a board</h1>
@@ -82,27 +70,9 @@ class BoardEditForm extends React.Component {
         <input
           type="text"
           name="name"
-          defaultValue={name}
+          defaultValue={this.props.name}
           onChange={this.handleName}
         />
-
-      <p>{this.state.errors.description}</p>
-        <input
-          type="text"
-          name="description"
-          defaultValue={description}
-          onChange={this.handleDescription}
-        />
-
-        <button type="button" onClick={this.delete}>
-          Delete
-        </button>
-        <button type="button" onClick={this.cancel}>
-          Cancel
-        </button>
-        <button type="button" onClick={this.save}>
-          Save
-        </button>
       </div>
     );
   }

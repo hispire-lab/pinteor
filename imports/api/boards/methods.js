@@ -172,6 +172,7 @@ const setName = new ValidatedMethod({
   // This Method encodes the form validation requirements.
   // By defining them in the Method, we do client and server-side
   // validation in one place.
+  /*
   validate: new SimpleSchema({
     newName: {
       type: String,
@@ -181,6 +182,22 @@ const setName = new ValidatedMethod({
       regEx: SimpleSchema.RegEx.Id,
     },
   }).validator(),
+  */
+  validate({ newName, boardId }) {
+    new SimpleSchema({
+      newName: {
+        type: String,
+        custom: nameBySlugIsUnique,
+      },
+      boardId: {
+        type: String,
+        regEx: SimpleSchema.RegEx.Id,
+      },
+    })
+    .validate({ newName, boardId }, {
+      extendedCustomContext: { userId: this.userId },
+    });
+  },
   // This is the body of the method. Use ES2015 object destructuring to get
   // the keyword arguments
   run({ newName, boardId }) {
@@ -203,7 +220,7 @@ const setName = new ValidatedMethod({
         'Cannot change the name of a board that is not yours.'
       );
     }
-    Boards.update({ _id: boardId }, { $set: { name: newName } });
+    Boards.update({ _id: boardId }, { $set: { name: newName, slug: slug(newName) } });
   },
 });
 
