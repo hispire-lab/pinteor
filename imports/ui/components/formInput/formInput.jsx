@@ -1,5 +1,4 @@
 import React from 'react';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 
 class FormInput extends React.Component {
 
@@ -34,17 +33,12 @@ class FormInput extends React.Component {
   }
 
   validate() {
+    const query = {};
+    query[this.props.name] = this.state.value;
     let obj = {};
     let error;
     try {
-      new SimpleSchema({
-        newName: {
-          type: String,
-          max: 10,
-        },
-      }).validate({
-        newName: this.state.value,
-      });
+      this.props.schema.validate(query);
     } catch (e) {
       error = e;
     } finally {
@@ -60,6 +54,7 @@ class FormInput extends React.Component {
         };
       }
     }
+
     return obj;
   }
 
