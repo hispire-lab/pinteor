@@ -1,8 +1,0 @@
-<template name="home_page">
-  <h1>Welcome to Meteor!</h1>
-  {{> loginButtons}}
-
-  {{#if currentUser}}
-    <a href="{{pathFor 'userPage' username=currentUser.username}}">My account</a>
-  {{/if}}
-</template>
