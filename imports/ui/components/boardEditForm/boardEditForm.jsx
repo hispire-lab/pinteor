@@ -36,8 +36,18 @@ class BoardEditForm extends React.Component {
               },
             })}
           />
+          <FormInput
+            name="country"
+            defaultValue="US"
+            schema={new SimpleSchema({
+              country: {
+                type: String,
+                min: 2,
+                max: 5,
+              },
+            })}
+          />
         </Form>
-
       </div>
     );
   }

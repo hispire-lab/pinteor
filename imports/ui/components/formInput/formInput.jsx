@@ -9,15 +9,20 @@ class FormInput extends React.Component {
 
     this.state = {
       value: this.props.defaultValue,
-      isValid: true,
+      isValid: false,
       error: '',
     };
+  }
+
+  componentWillMount() {
+    this.props.addToForm(this);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.isSubmitted) {
       const obj = this.validate();
       this.props.handleUserInput({
+        name: this.props.name,
         isValid: obj.isValid,
         error: obj.error,
       });
