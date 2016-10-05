@@ -82,6 +82,15 @@ TestServer.prototype.router = function(req, res) {
 		});
 	}
 
+	if (p === '/deflate-raw') {
+		res.statusCode = 200;
+		res.setHeader('Content-Type', 'text/plain');
+		res.setHeader('Content-Encoding', 'deflate');
+		zlib.deflateRaw('hello world', function(err, buffer) {
+			res.end(buffer);
+		});
+	}
+
 	if (p === '/sdch') {
 		res.statusCode = 200;
 		res.setHeader('Content-Type', 'text/plain');
@@ -248,6 +257,12 @@ TestServer.prototype.router = function(req, res) {
 		res.end('client error');
 	}
 
+	if (p === '/error/404') {
+		res.statusCode = 404;
+		res.setHeader('Content-Encoding', 'gzip');
+		res.end();
+	}
+
 	if (p === '/error/500') {
 		res.statusCode = 500;
 		res.setHeader('Content-Type', 'text/plain');
@@ -264,8 +279,25 @@ TestServer.prototype.router = function(req, res) {
 		res.end('invalid json');
 	}
 
-	if (p === '/empty') {
+	if (p === '/no-content') {
 		res.statusCode = 204;
+		res.end();
+	}
+
+	if (p === '/no-content/gzip') {
+		res.statusCode = 204;
+		res.setHeader('Content-Encoding', 'gzip');
+		res.end();
+	}
+
+	if (p === '/not-modified') {
+		res.statusCode = 304;
+		res.end();
+	}
+
+	if (p === '/not-modified/gzip') {
+		res.statusCode = 304;
+		res.setHeader('Content-Encoding', 'gzip');
 		res.end();
 	}
 

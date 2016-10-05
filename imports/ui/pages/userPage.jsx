@@ -22,6 +22,7 @@ class UserPage extends React.Component {
       <BoardPreview
         key={board._id}
         _id={board._id}
+        doc={board}
         name={board.name}
         pinsCount={board.pinsCount}
         description={board.description}

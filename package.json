@@ -19,6 +19,7 @@
     "rules": {}
   },
   "dependencies": {
+    "bcrypt": "^0.8.7",
     "browser": "^0.2.6",
     "growl": "^1.9.2",
     "jade": "^1.11.0",
@@ -28,6 +29,7 @@
     "react-addons-pure-render-mixin": "^15.0.2",
     "react-addons-test-utils": "^15.0.2",
     "react-dom": "^15.0.2",
+    "react-modal": "^1.4.0",
     "react-mounter": "^1.2.0",
     "slug": "^0.9.1",
     "underscore": "^1.8.3",

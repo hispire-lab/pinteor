@@ -377,8 +377,7 @@ var VersionRange = {
    * @param {string} version
    * @returns {boolean}
    */
-
-  contains: function (range, version) {
+  contains: function contains(range, version) {
     return checkOrExpression(range.trim(), version.trim());
   }
 };

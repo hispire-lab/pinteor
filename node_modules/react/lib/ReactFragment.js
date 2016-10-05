@@ -11,6 +11,8 @@
 
 'use strict';
 
+var _prodInvariant = require('./reactProdInvariant');
+
 var ReactChildren = require('./ReactChildren');
 var ReactElement = require('./ReactElement');
 
@@ -31,8 +33,11 @@ var numericPropertyRegex = /^\d+$/;
 var warnedAboutNumeric = false;
 
 var ReactFragment = {
-  // Wrap a keyed object in an opaque proxy that warns you if you access any
-  // of its properties.
+  /**
+   * Wrap a keyed object in an opaque proxy that warns you if you access any
+   * of its properties.
+   * See https://facebook.github.io/react/docs/create-fragment.html
+   */
   create: function (object) {
     if (typeof object !== 'object' || !object || Array.isArray(object)) {
       process.env.NODE_ENV !== 'production' ? warning(false, 'React.addons.createFragment only accepts a single object. Got: %s', object) : void 0;
@@ -43,7 +48,7 @@ var ReactFragment = {
       return object;
     }
 
-    !(object.nodeType !== 1) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'React.addons.createFragment(...): Encountered an invalid child; DOM ' + 'elements are not valid children of React components.') : invariant(false) : void 0;
+    !(object.nodeType !== 1) ? process.env.NODE_ENV !== 'production' ? invariant(false, 'React.addons.createFragment(...): Encountered an invalid child; DOM elements are not valid children of React components.') : _prodInvariant('0') : void 0;
 
     var result = [];
 

@@ -11,6 +11,7 @@ var stream = require('stream');
 var resumer = require('resumer');
 var FormData = require('form-data');
 var http = require('http');
+var fs = require('fs');
 
 var TestServer = require('./server');
 
@@ -278,7 +279,7 @@ describe('node-fetch', function() {
 		});
 	});
 
-	it('should obey maximum redirect', function() {
+	it('should obey maximum redirect, reject case', function() {
 		url = base + '/redirect/chain';
 		opts = {
 			follow: 1
@@ -286,6 +287,17 @@ describe('node-fetch', function() {
 		return expect(fetch(url, opts)).to.eventually.be.rejected
 			.and.be.an.instanceOf(FetchError)
 			.and.have.property('type', 'max-redirect');
+	});
+
+	it('should obey redirect chain, resolve case', function() {
+		url = base + '/redirect/chain';
+		opts = {
+			follow: 2
+		}
+		return fetch(url, opts).then(function(res) {
+			expect(res.url).to.equal(base + '/inspect');
+			expect(res.status).to.equal(200);
+		});
 	});
 
 	it('should allow not following redirect', function() {
@@ -416,12 +428,63 @@ describe('node-fetch', function() {
 		});
 	});
 
-	it('should handle empty response', function() {
-		url = base + '/empty';
+	it('should handle no content response', function() {
+		url = base + '/no-content';
 		return fetch(url).then(function(res) {
 			expect(res.status).to.equal(204);
 			expect(res.statusText).to.equal('No Content');
 			expect(res.ok).to.be.true;
+			return res.text().then(function(result) {
+				expect(result).to.be.a('string');
+				expect(result).to.be.empty;
+			});
+		});
+	});
+
+	it('should return empty object on no-content response', function() {
+		url = base + '/no-content';
+		return fetch(url).then(function(res) {
+			return res.json().then(function(result) {
+				expect(result).to.be.an('object');
+				expect(result).to.be.empty;
+			});
+		});
+	});
+
+	it('should handle no content response with gzip encoding', function() {
+		url = base + '/no-content/gzip';
+		return fetch(url).then(function(res) {
+			expect(res.status).to.equal(204);
+			expect(res.statusText).to.equal('No Content');
+			expect(res.headers.get('content-encoding')).to.equal('gzip');
+			expect(res.ok).to.be.true;
+			return res.text().then(function(result) {
+				expect(result).to.be.a('string');
+				expect(result).to.be.empty;
+			});
+		});
+	});
+
+	it('should handle not modified response', function() {
+		url = base + '/not-modified';
+		return fetch(url).then(function(res) {
+			expect(res.status).to.equal(304);
+			expect(res.statusText).to.equal('Not Modified');
+			expect(res.ok).to.be.false;
+			return res.text().then(function(result) {
+				expect(result).to.be.a('string');
+				expect(result).to.be.empty;
+			});
+		});
+	});
+
+	it('should handle not modified response with gzip encoding', function() {
+		url = base + '/not-modified/gzip';
+		return fetch(url).then(function(res) {
+			expect(res.status).to.equal(304);
+			expect(res.statusText).to.equal('Not Modified');
+			expect(res.headers.get('content-encoding')).to.equal('gzip');
+			expect(res.ok).to.be.false;
 			return res.text().then(function(result) {
 				expect(result).to.be.a('string');
 				expect(result).to.be.empty;
@@ -442,6 +505,17 @@ describe('node-fetch', function() {
 
 	it('should decompress deflate response', function() {
 		url = base + '/deflate';
+		return fetch(url).then(function(res) {
+			expect(res.headers.get('content-type')).to.equal('text/plain');
+			return res.text().then(function(result) {
+				expect(result).to.be.a('string');
+				expect(result).to.equal('hello world');
+			});
+		});
+	});
+
+	it('should decompress deflate raw response from old apache server', function() {
+		url = base + '/deflate-raw';
 		return fetch(url).then(function(res) {
 			expect(res.headers.get('content-type')).to.equal('text/plain');
 			return res.text().then(function(result) {
@@ -565,11 +639,30 @@ describe('node-fetch', function() {
 		});
 	});
 
-	it('should allow POST request with readable stream as body', function() {
+	it('should allow POST request with buffer body', function() {
 		url = base + '/inspect';
 		opts = {
 			method: 'POST'
-			, body: resumer().queue('a=1').end()
+			, body: new Buffer('a=1', 'utf-8')
+		};
+		return fetch(url, opts).then(function(res) {
+			return res.json();
+		}).then(function(res) {
+			expect(res.method).to.equal('POST');
+			expect(res.body).to.equal('a=1');
+			expect(res.headers['transfer-encoding']).to.equal('chunked');
+			expect(res.headers['content-length']).to.be.undefined;
+		});
+	});
+
+	it('should allow POST request with readable stream as body', function() {
+		var body = resumer().queue('a=1').end();
+		body = body.pipe(new stream.PassThrough());
+
+		url = base + '/inspect';
+		opts = {
+			method: 'POST'
+			, body: body
 		};
 		return fetch(url, opts).then(function(res) {
 			return res.json();
@@ -600,6 +693,26 @@ describe('node-fetch', function() {
 		});
 	});
 
+	it('should allow POST request with form-data using stream as body', function() {
+		var form = new FormData();
+		form.append('my_field', fs.createReadStream('test/dummy.txt'));
+
+		url = base + '/multipart';
+		opts = {
+			method: 'POST'
+			, body: form
+		};
+
+		return fetch(url, opts).then(function(res) {
+			return res.json();
+		}).then(function(res) {
+			expect(res.method).to.equal('POST');
+			expect(res.headers['content-type']).to.contain('multipart/form-data');
+			expect(res.headers['content-length']).to.be.undefined;
+			expect(res.body).to.contain('my_field=');
+		});
+	});
+
 	it('should allow POST request with form-data as body and custom headers', function() {
 		var form = new FormData();
 		form.append('a','1');
@@ -621,6 +734,21 @@ describe('node-fetch', function() {
 			expect(res.headers['content-length']).to.be.a('string');
 			expect(res.headers.b).to.equal('2');
 			expect(res.body).to.equal('a=1');
+		});
+	});
+
+	it('should allow POST request with object body', function() {
+		url = base + '/inspect';
+		// note that fetch simply calls tostring on an object
+		opts = {
+			method: 'POST'
+			, body: { a:1 }
+		};
+		return fetch(url, opts).then(function(res) {
+			return res.json();
+		}).then(function(res) {
+			expect(res.method).to.equal('POST');
+			expect(res.body).to.equal('[object Object]');
 		});
 	});
 
@@ -650,6 +778,38 @@ describe('node-fetch', function() {
 		});
 	});
 
+	it('should allow POST request with string body', function() {
+		url = base + '/inspect';
+		opts = {
+			method: 'POST'
+			, body: 'a=1'
+		};
+		return fetch(url, opts).then(function(res) {
+			return res.json();
+		}).then(function(res) {
+			expect(res.method).to.equal('POST');
+			expect(res.body).to.equal('a=1');
+			expect(res.headers['transfer-encoding']).to.be.undefined;
+			expect(res.headers['content-length']).to.equal('3');
+		});
+	});
+
+	it('should allow DELETE request with string body', function() {
+		url = base + '/inspect';
+		opts = {
+			method: 'DELETE'
+			, body: 'a=1'
+		};
+		return fetch(url, opts).then(function(res) {
+			return res.json();
+		}).then(function(res) {
+			expect(res.method).to.equal('DELETE');
+			expect(res.body).to.equal('a=1');
+			expect(res.headers['transfer-encoding']).to.be.undefined;
+			expect(res.headers['content-length']).to.equal('3');
+		});
+	});
+
 	it('should allow PATCH request', function() {
 		url = base + '/inspect';
 		opts = {
@@ -674,6 +834,23 @@ describe('node-fetch', function() {
 			expect(res.statusText).to.equal('OK');
 			expect(res.headers.get('content-type')).to.equal('text/plain');
 			expect(res.body).to.be.an.instanceof(stream.Transform);
+			return res.text();
+		}).then(function(text) {
+			expect(text).to.equal('');
+		});
+	});
+
+	it('should allow HEAD request with content-encoding header', function() {
+		url = base + '/error/404';
+		opts = {
+			method: 'HEAD'
+		};
+		return fetch(url, opts).then(function(res) {
+			expect(res.status).to.equal(404);
+			expect(res.headers.get('content-encoding')).to.equal('gzip');
+			return res.text();
+		}).then(function(text) {
+			expect(text).to.equal('');
 		});
 	});
 
@@ -898,6 +1075,19 @@ describe('node-fetch', function() {
 		});
 	});
 
+	it('should allow cloning a json response, first log as text response, then return json object', function() {
+		url = base + '/json';
+		return fetch(url).then(function(res) {
+			var r1 = res.clone();
+			return r1.text().then(function(result) {
+				expect(result).to.equal('{"name":"value"}');
+				return res.json().then(function(result) {
+					expect(result).to.deep.equal({name: 'value'});
+				});
+			});
+		});
+	});
+
 	it('should not allow cloning a response after its been used', function() {
 		url = base + '/hello';
 		return fetch(url).then(function(res) {
@@ -985,6 +1175,7 @@ describe('node-fetch', function() {
 		res.j = NaN;
 		res.k = true;
 		res.l = false;
+		res.m = new Buffer('test');
 
 		var h1 = new Headers(res);
 
@@ -1004,6 +1195,7 @@ describe('node-fetch', function() {
 		expect(h1._headers['j']).to.be.undefined;
 		expect(h1._headers['k']).to.be.undefined;
 		expect(h1._headers['l']).to.be.undefined;
+		expect(h1._headers['m']).to.be.undefined;
 
 		expect(h1._headers['z']).to.be.undefined;
 	});
@@ -1062,6 +1254,8 @@ describe('node-fetch', function() {
 		expect(r2.body).to.equal(form);
 		expect(r1.follow).to.equal(1);
 		expect(r2.follow).to.equal(2);
+		expect(r1.counter).to.equal(0);
+		expect(r2.counter).to.equal(0);
 	});
 
 	it('should support overwrite Request instance', function() {
@@ -1117,6 +1311,13 @@ describe('node-fetch', function() {
 		});
 	});
 
+	it('should support buffer() method in Response constructor', function() {
+		var res = new Response('a=1');
+		return res.buffer().then(function(result) {
+			expect(result.toString()).to.equal('a=1');
+		});
+	});
+
 	it('should support clone() method in Response constructor', function() {
 		var body = resumer().queue('a=1').end();
 		body = body.pipe(new stream.PassThrough());
@@ -1164,6 +1365,11 @@ describe('node-fetch', function() {
 		});
 	});
 
+	it('should default to 200 as status code', function() {
+		var res = new Response(null);
+		expect(res.status).to.equal(200);
+	});
+
 	it('should support parsing headers in Request constructor', function() {
 		url = base;
 		var req = new Request(url, {
@@ -1184,7 +1390,7 @@ describe('node-fetch', function() {
 		return req.text().then(function(result) {
 			expect(result).to.equal('a=1');
 		});
-	}); 
+	});
 
 	it('should support json() method in Request constructor', function() {
 		url = base;
@@ -1195,7 +1401,24 @@ describe('node-fetch', function() {
 		return req.json().then(function(result) {
 			expect(result.a).to.equal(1);
 		});
-	}); 
+	});
+
+	it('should support buffer() method in Request constructor', function() {
+		url = base;
+		var req = new Request(url, {
+			body: 'a=1'
+		});
+		expect(req.url).to.equal(url);
+		return req.buffer().then(function(result) {
+			expect(result.toString()).to.equal('a=1');
+		});
+	});
+
+	it('should support arbitrary url in Request constructor', function() {
+		url = 'anything';
+		var req = new Request(url);
+		expect(req.url).to.equal('anything');
+	});
 
 	it('should support clone() method in Request constructor', function() {
 		url = base;
@@ -1221,7 +1444,7 @@ describe('node-fetch', function() {
 		expect(cl.follow).to.equal(3);
 		expect(cl.compress).to.equal(false);
 		expect(cl.method).to.equal('POST');
-		expect(cl.counter).to.equal(3);
+		expect(cl.counter).to.equal(0);
 		expect(cl.agent).to.equal(agent);
 		// clone body shouldn't be the same body
 		expect(cl.body).to.not.equal(body);
@@ -1231,11 +1454,12 @@ describe('node-fetch', function() {
 		});
 	});
 
-	it('should support text() and json() method in Body constructor', function() {
+	it('should support text(), json() and buffer() method in Body constructor', function() {
 		var body = new Body('a=1');
 		expect(body).to.have.property('text');
 		expect(body).to.have.property('json');
-	}); 
+		expect(body).to.have.property('buffer');
+	});
 
 	it('should create custom FetchError', function() {
 		var systemError = new Error('system');
@@ -1249,7 +1473,7 @@ describe('node-fetch', function() {
 		expect(err.type).to.equal('test-error');
 		expect(err.code).to.equal('ESOMEERROR');
 		expect(err.errno).to.equal('ESOMEERROR');
-	}); 
+	});
 
 	it('should support https request', function() {
 		this.timeout(5000);
