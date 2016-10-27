@@ -1,0 +1,33 @@
+<template name="boardFormUpdate">
+  <div class="modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h4 class="modal-title">Edit board</h4>
+        </div>
+
+        <div class="modal-body">
+          {{#autoForm
+             id="boardFormUpdate"
+             type="method-update"
+             meteormethod="boards.methods.updateData"
+             singleMethodArgument=true
+             schema=schema
+             doc=board
+             templateModal=templateModal
+          }}
+            {{> afQuickField name="name"}}
+            {{> afQuickField name="description"}}
+            {{> afQuickField name="isPrivate"}}
+            <button class="btn btn-danger js-delete">Delete</button>
+            <div class="pull-right">
+              <button class="btn btn-default js-cancel">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          {{/autoForm}}
+        </div>
+      </div>
+     </div>
+   </div>
+</template>

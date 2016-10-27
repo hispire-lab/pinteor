@@ -1,0 +1,44 @@
+<template name="navBar">
+  <div class="row">
+    <nav class="navbar navbar-default navbar-fixed-bottom">
+      <div class="container-fluid">
+        <ul class="nav navbar-nav">
+          <li>
+            <!--
+              for links like buttons inside navbars li we need to wrap
+              the links inside a div.
+              see: https://github.com/twbs/bootstrap/issues/8878
+            !-->
+            <div>
+              <a
+                href={{pathFor 'App.home_page'}}
+                role="button"
+                class="btn btn-link btn-lg navbar-btn"
+                aria-label="Home"
+              >
+                <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+              </a>
+            </div>
+          </li>
+          <li>
+            <!--
+              for links like buttons inside navbars li we need to wrap
+              the links inside a div.
+              see: https://github.com/twbs/bootstrap/issues/8878
+            !-->
+            <div>
+              <a
+                href={{pathFor 'App.user_page' username=currentUser.username}}
+                role="button"
+                class="btn btn-link btn-lg navbar-btn"
+                aria-label="User"
+              >
+                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+              </a>
+            </div>
+          </li>
+        </ul>
+      </div> <!-- /.container-fluid -->
+    </nav>
+  </div>
+</template>

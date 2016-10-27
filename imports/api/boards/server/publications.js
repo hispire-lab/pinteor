@@ -1,22 +1,55 @@
-/* eslint-disable prefer-arrow-callback */
-
 import { Meteor } from 'meteor/meteor';
-import { Boards } from '../boards.js';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import Boards from '../boards.js';
+import Users from '../../users/users.js';
 
-/*
- * returns the public boards for a given user.
- */
-/*
- * FIXME: return only the public fields.
- * use simple Schema to check userId param.
- */
-Meteor.publish('boards.public', function boardsPublic(userId) {
-  return Boards.find({ userId, isPrivate: false });
-});
+Meteor.publish('boards.list', function boardsListPublication(username) {
+  new SimpleSchema({
+    username: { type: String },
+  }).validate({ username });
 
-Meteor.publish('boards.private', function boardsPrivate() {
-  if (!this.userId) {
+  const user = Users.findOne({ username });
+  if (!user) {
     return this.ready();
   }
-  return Boards.find({ userId: this.userId, isPrivate: true });
+
+  const isCurrentUser = user._id === this.userId;
+  if (isCurrentUser) {
+    return Boards.find(
+      { userId: user._id },
+      { fields: Boards.publicFields }
+    );
+  }
+
+  return Boards.find(
+    { userId: user._id, isPrivate: false },
+    { fields: Boards.publicFields }
+  );
+});
+
+Meteor.publish('boards.single', function boardSinglePublication(username, boardSlug) {
+  new SimpleSchema({
+    username: { type: String },
+    boardSlug: { type: String },
+  }).validate({ username, boardSlug });
+
+  const user = Users.findOne({ username });
+  if (!user) {
+    return this.ready();
+  }
+
+  const board = Boards.find(
+    { userId: user._id, slug: boardSlug },
+    { fields: Boards.publicFields },
+  );
+  if (!board) {
+    return this.ready();
+  }
+
+  const isCurrentUser = user._id === this.userId;
+  if (board.isPrivate && isCurrentUser) {
+    return board;
+  }
+
+  return board;
 });

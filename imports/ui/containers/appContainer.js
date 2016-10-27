@@ -1,11 +1,16 @@
-import { Meteor } from 'meteor/meteor';
-import { createContainer } from 'meteor/react-meteor-data';
-import AppLayout from '../layouts/appLayout.jsx';
+import { Template } from 'meteor/templating';
+import './appContainer.html';
+import '../layouts/appLayout.js';
 
-const AppContainer = createContainer(props => {
-  return {
-    user: Meteor.user(),
-  };
-}, AppLayout);
+Template.appContainer.onCreated(function appContainerOnCreated() {
+  this.autorun(() => {
+    this.subscribe('users.current');
+  });
+});
 
-export default AppContainer;
+Template.appContainer.helpers({
+  currentUserReady() {
+    const instance = Template.instance();
+    return instance.subscriptionsReady();
+  },
+});

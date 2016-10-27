@@ -1,0 +1,1 @@
+import './slug-config.js';

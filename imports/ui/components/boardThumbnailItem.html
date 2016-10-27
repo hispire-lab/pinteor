@@ -1,0 +1,10 @@
+<Template name="boardThumbnailItem">
+  <div class="col-sm-3">
+    <div class="thumbnail">
+      <a href="{{pathFor 'App.board_page' username=board.username boardSlug=board.slug}}">
+      <img src={{board.imageUrl}} alt="...">
+      <h3>{{board.name}}</h3>
+      </a>
+    </div>
+  </div>
+</Template>

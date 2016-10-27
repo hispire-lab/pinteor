@@ -1,0 +1,18 @@
+<template name="appLayout">
+  <div class="container-fluid">
+    {{#if logginIn}}
+      <p>Login in...</p>
+    {{else}}
+      {{#if currentUserReady}}
+        {{#if currentUser}}
+          {{> navBar ""}}
+          {{> Template.dynamic template=regions.appLayout.main data=(dataArgs regions)}}
+        {{else}}
+          {{> loginButtons}}
+        {{/if}}
+      {{else}}
+        <p>Loading...</p>
+      {{/if}}
+    {{/if}}
+  </div>
+</Template>

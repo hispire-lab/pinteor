@@ -1,8 +1,32 @@
-/* eslint-disable prefer-arrow-callback */
-
 import { Meteor } from 'meteor/meteor';
-import { Users } from '../users.js';
-import { Boards } from '../../boards/boards.js';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import Users from '../users.js';
+// import { Boards } from '../../boards';
+
+Meteor.publish('users.current', function usersCurrentPublication() {
+  const user = Users.find({ _id: this.userId }, { fields: Users.publicFields });
+  if (user) {
+    return user;
+  }
+
+  return this.ready();
+});
+
+// Note: instead of use Users.find, i need to use Users.findByUsername
+// meteor built in function in order to avoid case sensitive problems.
+Meteor.publish('users.single', function usersSinglePublication(username) {
+  new SimpleSchema({
+    username: { type: String },
+  }).validate({ username });
+
+  const user = Users.find({ username }, { fields: Users.publicFields });
+  if (user) {
+    return user;
+  }
+
+  return this.ready();
+});
+
 
 /*
  * FIXME: return only the public fields.
@@ -10,6 +34,8 @@ import { Boards } from '../../boards/boards.js';
  * TODO: when an user with username param does not exists
  * return empty cursor.
  */
+/* eslint-disable prefer-arrow-callback */
+/*
 Meteor.publishComposite('users.withBoards', function userWithBoards(username) {
   return {
     find() {
@@ -27,3 +53,4 @@ Meteor.publishComposite('users.withBoards', function userWithBoards(username) {
     }],
   };
 });
+*/

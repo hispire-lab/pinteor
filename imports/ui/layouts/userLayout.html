@@ -1,0 +1,13 @@
+<template name="userLayout">
+  {{#if userReady}}
+    {{#if user}}
+      {{> userToolBar ""}}
+      {{> userProfileHeader user=user}}
+      {{> Template.dynamic template=regions.userLayout.main data=""}}
+    {{else}}
+      <p>Not found</p>
+    {{/if}}
+  {{else}}
+    <p>Loading...</p>
+  {{/if}}
+</template>

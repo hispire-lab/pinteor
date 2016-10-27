@@ -1,8 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-import { Boards } from '../boards/boards.js';
-import { Pins } from '../pins/pins.js';
-import { Notifications } from '../notifications/notifications.js';
 
 const Users = Meteor.users;
 
@@ -29,33 +26,41 @@ Users.schema = new SimpleSchema({
     type: Date,
     optional: true,
   },
+  /*
   usersFollowing: {
     type: [SimpleSchema.RegEx.Id],
     optional: true,
   },
+  */
+  /*
   usersFollowers: {
     type: [SimpleSchema.RegEx.Id],
     optional: true,
   },
+  */
+  /*
   boardsFollowing: {
     type: [SimpleSchema.RegEx.Id],
     optional: true,
   },
+  */
   /*
   boardsFollowers: {
     type: [SimpleSchema.RegEx.Id],
     optional: true,
   },
   */
+  /*
   likesCount: {
     type: Number,
     optional: true,
     // FIXME: this should be moved to Accounts.onCreatedUser callback
     defaultValue: 0,
   },
-  boardsCount: {
+  */
+  boardCount: {
     type: Number,
-    optional: true,
+    // optional: true,
     // FIXME: this should be moved to Accounts.onCreatedUser callback
     defaultValue: 0,
   },
@@ -63,38 +68,9 @@ Users.schema = new SimpleSchema({
 
 Users.attachSchema(Users.schema);
 
-Users.helpers({
+Users.publicFields = {
+  username: 1,
+  boardCount: 1,
+};
 
-  boards() {
-    return Boards.find({ userId: this._id });
-  },
-  /*
-   * FIXME: now userId is denormalized into pins so the board
-   * query is unneccessary.
-   */
-  pins() {
-    const boardIds = this.boards().map(board => board._id);
-    return Pins.find({ boardId: { $in: boardIds } }).fetch();
-  },
-  /*
-   * FIXME: now userId is denormalized into pins so the board
-   * query is unneccessary.
-   */
-  pinsLiked() {
-    const boardIds = this.boards().map(board => board._id);
-    return Pins.find({
-      boardId: { $in: boardIds },
-      likesCount: { $gt: 0 },
-    }).fetch();
-  },
-
-  unreadNotifications() {
-    return Notifications.find({
-      userId: this._id,
-      isRead: { $eq: false },
-    });
-  },
-
-});
-
-export { Users };
+export default Users;
