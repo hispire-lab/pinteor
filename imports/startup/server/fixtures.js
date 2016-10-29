@@ -1,10 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
-import faker from 'faker';
+import Chance from 'chance';
 import Users from '../../api/users/users.js';
 import Boards from '../../api/boards/boards.js';
 
 Meteor.startup(() => {
+  const chance = new Chance();
+
   Users.remove({});
   Boards.remove({});
 
@@ -23,7 +25,7 @@ Meteor.startup(() => {
     userId: pitxonId,
     username: 'pitxon',
     name: 'dogs',
-    description: faker.lorem.sentence(),
+    description: chance.paragraph(),
     isPrivate: true,
     imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
   });
@@ -32,7 +34,7 @@ Meteor.startup(() => {
     userId: pitxonId,
     name: 'cats',
     username: 'pitxon',
-    description: faker.lorem.sentence(),
+    description: chance.paragraph(),
     isPrivate: true,
     imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
   });
@@ -41,7 +43,7 @@ Meteor.startup(() => {
     userId: pitxonId,
     name: 'horses',
     username: 'pitxon',
-    description: faker.lorem.sentence(),
+    description: chance.paragraph(),
     isPrivate: false,
     imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
   });
@@ -51,7 +53,7 @@ Meteor.startup(() => {
     userId: giorgixId,
     name: 'beers',
     username: 'giorgix',
-    description: faker.lorem.sentence(),
+    description: chance.paragraph(),
     isPrivate: true,
     imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
   });
@@ -60,7 +62,7 @@ Meteor.startup(() => {
     userId: giorgixId,
     username: 'giorgix',
     name: 'whisky',
-    description: faker.lorem.sentence(),
+    description: chance.paragraph(),
     isPrivate: false,
     imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
   });

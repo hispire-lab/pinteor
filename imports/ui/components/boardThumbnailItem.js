@@ -1,7 +1,7 @@
-import { Template } from 'meteor/templating';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+// import { Template } from 'meteor/templating';
+// import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import './boardThumbnailItem.html';
-
+/*
 Template.boardThumbnailItem.onCreated(function boardThumnailItemOnCreated() {
   this.autorun(() => {
     new SimpleSchema({
@@ -9,3 +9,4 @@ Template.boardThumbnailItem.onCreated(function boardThumnailItemOnCreated() {
     }).validate(Template.currentData());
   });
 });
+*/

@@ -1,9 +1,9 @@
 import { Template } from 'meteor/templating';
-import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+// import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
 import './boardItem.html';
 import './boardFormUpdate.js';
-
+/*
 Template.boardItem.onCreated(function boardItemOnCreated() {
   this.autorun(() => {
     new SimpleSchema({
@@ -11,6 +11,7 @@ Template.boardItem.onCreated(function boardItemOnCreated() {
     }).validate(Template.currentData());
   });
 });
+*/
 
 
 Template.boardItem.events({

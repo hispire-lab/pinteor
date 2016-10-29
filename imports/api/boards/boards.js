@@ -143,71 +143,15 @@ Boards.schemas = {
   }),
 };
 
-/*
-Boards.schemaForm = new SimpleSchema({
-  name: {
-    type: String,
-    min: 3,
-    max: 10,
-    custom: isNameAvailable,
-  },
-  description: {
-    type: String,
-    optional: true,
-  },
-  isPrivate: {
-    type: Boolean,
-  },
-});
-*/
-
-/*
-Boards.schema = new SimpleSchema({
-  name: {
-    type: String,
-    min: 3,
-    max: 10,
-    custom: isNameAvailable,
-  },
-  slug: {
-    type: String,
-    autoValue() { // eslint-disable-line consistent-return
-      const name = this.field('name');
-      if (name.isSet) {
-        return slug(name.value);
-      }
-    },
-  },
-  description: {
-    type: String,
-    optional: true,
-  },
-  imageUrl: {
-    type: String,
-    optional: true,
-    regEx: SimpleSchema.RegEx.Url,
-  },
-  createdAt: {
-    type: Date,
-    optional: true,
-  },
-  userId: {
-    type: String,
-    regEx: SimpleSchema.RegEx.Id,
-  },
-  username: {
-    type: String,
-  },
-  isPrivate: {
-    type: Boolean,
-    defaultValue: false,
-  },
-});
-*/
-
 Boards.attachSchema(Boards.schemas.collection);
 Boards.schemas.form.namedContext('boardFormInsert');
 Boards.schemas.form.namedContext('boardFormUpdate');
+
+Boards.helpers({
+  isEditableBy(userId) {
+    return this.userId === userId;
+  },
+});
 
 Boards.publicFields = {
   userId: 1,

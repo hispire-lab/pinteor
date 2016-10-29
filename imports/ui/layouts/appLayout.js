@@ -8,8 +8,9 @@ Template.appLayout.onCreated(function appLayoutOnCreated() {
   this.autorun(() => {
     new SimpleSchema({
       currentUserReady: { type: Boolean },
-      'regions.appLayout.main': { type: String },
-      'regions.userLayout.main': { type: String },
+      // 'regions.appLayout.main': { type: String },
+      // 'regions.userLayout.main': { type: String },
+      regions: { type: Object, blackbox: true },
     }).validate(Template.currentData());
   });
 });

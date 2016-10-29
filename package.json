@@ -6,7 +6,7 @@
     "lint": "eslint .",
     "pretest": "npm run lint --silent",
     "test": "meteor test --once --driver-package dispatch:mocha-phantomjs --port 3100",
-    "test-watch": "meteor test --driver-package practicalmeteor:mocha --port 3100",
+    "test-watch": "meteor test --driver-package practicalmeteor:mocha --port 3200",
     "test-watch-terminal": "TEST_WATCH=1 meteor test --driver-package dispatch:mocha-phantomjs --port 3100"
   },
   "eslintConfig": {
@@ -47,14 +47,14 @@
     "unicode": "^0.6.1"
   },
   "devDependencies": {
-    "babel-eslint": "^7.0.0",
-    "eslint": "^3.7.1",
+    "babel-eslint": "^7.1.0",
+    "chance": "^1.0.4",
+    "eslint": "^3.8.1",
     "eslint-config-airbnb": "^12.0.0",
     "eslint-import-resolver-meteor": "^0.3.3",
-    "eslint-plugin-import": "^2.0.1",
+    "eslint-plugin-import": "^1.16.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-meteor": "^4.0.1",
-    "eslint-plugin-react": "^6.4.1",
-    "faker": "^3.1.0"
+    "eslint-plugin-react": "^6.4.1"
   }
 }

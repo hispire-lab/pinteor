@@ -1,3 +1,4 @@
+import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import slug from 'slug';
@@ -15,7 +16,7 @@ export const isSlugAvailable = new ValidatedMethod({
   },
 });
 
-export const insertData = new ValidatedMethod({
+export const boardsInsert = new ValidatedMethod({
 
   name: 'boards.methods.insertData',
 
@@ -26,6 +27,13 @@ export const insertData = new ValidatedMethod({
   }).validator(),
 
   run({ name, description, isPrivate }) {
+    if (!this.userId) {
+      throw new Meteor.Error(
+        'boards.insert.notLoggedIn',
+        'Must be logged in to make a board.'
+      );
+    }
+
     const userId = this.userId;
     const username = Users.findOne({ _id: userId }, { fields: { username: 1 } }).username;
     const imageUrl = 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg';
@@ -41,12 +49,11 @@ export const insertData = new ValidatedMethod({
 
 });
 
-export const updateData = new ValidatedMethod({
+export const boardsUpdate = new ValidatedMethod({
 
   name: 'boards.methods.updateData',
 
-  validate(idAndModifier) {
-    const modifier = idAndModifier.modifier;
+  validate({ _id, modifier }) { // eslint-disable-line no-unused-vars
     new SimpleSchema({
       name: { type: String },
       description: { type: String, optional: true },
@@ -54,10 +61,22 @@ export const updateData = new ValidatedMethod({
     }).validate(modifier, { modifier: true });
   },
 
-  run(idAndModifier) {
-    const _id = idAndModifier._id;
-    const modifier = idAndModifier.modifier;
-    // console.log('method update data: ', modifier);
+  run({ _id, modifier }) {
+    if (!this.userId) {
+      throw new Meteor.Error(
+        'boards.update.notLoggedIn',
+        'Must be logged in to update a board.'
+      );
+    }
+
+    const board = Boards.findOne({ _id });
+    if (!board.isEditableBy(this.userId)) {
+      throw new Meteor.Error(
+        'boards.update.accessDenied',
+        'You don\'t have permission to edit this board.'
+      );
+    }
+
     return Boards.update({ _id }, modifier);
   },
 
