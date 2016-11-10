@@ -1,0 +1,15 @@
+<template name="pinThumbnailList">
+  <div class="row">
+    {{#if pinsReady}}
+      {{#if pins}}
+        {{#each pin in pins}}
+          {{> pinThumbnailItem pin=pin}}
+        {{/each}}
+      {{else}}
+        <p>There are no pins</p>
+      {{/if}}
+    {{else}}
+      <p>Loading...</p>
+    {{/if}}
+  </div>
+</template>

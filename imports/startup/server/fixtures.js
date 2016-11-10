@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
+import { Factory } from 'meteor/dburles:factory';
 import Chance from 'chance';
 import Users from '../../api/users/users.js';
 import Boards from '../../api/boards/boards.js';
@@ -21,6 +22,20 @@ Meteor.startup(() => {
   });
 
   // pitxon boards
+
+  const pitxonBoard = Factory.create('board', {
+    userId: pitxonId,
+    username: 'pitxon',
+    name: 'cars',
+    imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
+  });
+  Factory.create('pin', {
+    userId: pitxonBoard.userId,
+    username: pitxonBoard.username,
+    boardId: pitxonBoard._id,
+    imageUrl: 'http://www.fastcoolcars.com/images/Index%20page/2014vetteL.jpg',
+  });
+
   Boards.insert({
     userId: pitxonId,
     username: 'pitxon',

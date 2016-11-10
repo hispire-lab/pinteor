@@ -1,5 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { Factory } from 'meteor/dburles:factory';
+import Chance from 'chance';
 
 const Users = Meteor.users;
 
@@ -64,6 +66,10 @@ Users.schema = new SimpleSchema({
     // FIXME: this should be moved to Accounts.onCreatedUser callback
     defaultValue: 0,
   },
+  pinCount: {
+    type: Number,
+    defaultValue: 0,
+  },
 });
 
 Users.attachSchema(Users.schema);
@@ -71,6 +77,16 @@ Users.attachSchema(Users.schema);
 Users.publicFields = {
   username: 1,
   boardCount: 1,
+  pinCount: 1,
 };
+
+const chance = new Chance();
+
+Factory.define('user', Users, {
+  username: chance.name(),
+  createdAt: new Date(),
+  boardsCount: 0,
+  pinCount: 0,
+});
 
 export default Users;

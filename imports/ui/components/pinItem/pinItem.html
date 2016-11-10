@@ -1,0 +1,21 @@
+<template name="pinItem">
+  {{#if pinReady}}
+    {{#if pin}}
+      <img src="{{pin.imageUrl}}" alt="...">
+    {{else}}
+      <p>Not found Pin</p>
+    {{/if}}
+  {{else}}
+    <p>Loading...</p>
+  {{/if}}
+
+  {{#if isCurrentUser pin.userId}}
+    <button
+      type="button"
+      class="btn btn-default btn-lg js-edit"
+      aria-label="Pencil"
+    >
+      <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+    </button>
+  {{/if}}
+</template>

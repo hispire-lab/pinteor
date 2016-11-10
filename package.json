@@ -6,7 +6,8 @@
     "lint": "eslint .",
     "pretest": "npm run lint --silent",
     "test": "meteor test --once --driver-package dispatch:mocha-phantomjs --port 3100",
-    "test-watch": "meteor test --driver-package practicalmeteor:mocha --port 3200",
+    "test-watch": "meteor test --driver-package practicalmeteor:mocha --port 3100",
+    "test-app-watch": "meteor test --full-app --driver-package practicalmeteor:mocha --port 3200",
     "test-watch-terminal": "TEST_WATCH=1 meteor test --driver-package dispatch:mocha-phantomjs --port 3100"
   },
   "eslintConfig": {

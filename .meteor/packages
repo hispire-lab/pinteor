@@ -44,8 +44,9 @@ arillo:flow-router-helpers
 
 # testing
 dburles:factory
+xolvio:cleaner
 practicalmeteor:mocha
 practicalmeteor:chai
+practicalmeteor:sinon
 dispatch:mocha-phantomjs
-
-# utils
+hwillson:stub-collections

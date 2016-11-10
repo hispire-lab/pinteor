@@ -20,11 +20,7 @@ export const boardsInsert = new ValidatedMethod({
 
   name: 'boards.methods.insertData',
 
-  validate: new SimpleSchema({
-    name: { type: String },
-    description: { type: String, optional: true },
-    isPrivate: { type: Boolean },
-  }).validator(),
+  validate: Boards.schemas.form.validator(),
 
   run({ name, description, isPrivate }) {
     if (!this.userId) {
@@ -77,7 +73,9 @@ export const boardsUpdate = new ValidatedMethod({
       );
     }
 
-    return Boards.update({ _id }, modifier);
+    const fieldsToSet = modifier.$set;
+    fieldsToSet.userId = this.userId;
+    return Boards.update({ _id }, { $set: fieldsToSet });
   },
 
 });

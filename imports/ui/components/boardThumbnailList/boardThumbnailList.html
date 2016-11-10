@@ -1,0 +1,15 @@
+<template name="boardThumbnailList">
+  <div id="board-thumbnail-list" class="row">
+    {{#if boardsReady}}
+      {{#if boards}}
+        {{#each board in boards}}
+          {{> boardThumbnailItem board=board}}
+        {{/each}}
+      {{else}}
+        <p>There are no boards</p>
+      {{/if}}
+    {{else}}
+      <p>Loading...</p>
+    {{/if}}
+  </div>
+</template>
