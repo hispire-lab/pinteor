@@ -1,1 +1,0 @@
-import './pinThumbnailListContainer.js';

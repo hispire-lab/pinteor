@@ -17,6 +17,7 @@ Template.boardPage.onCreated(function boardPageOnCreated() {
       'board.createdAt': { type: Date },
       'board.imageUrl': { type: String }, // thos shoud be a regex
       'board.slug': { type: String },
+      'board.pinCount': { type: Number },
       boardReady: { type: Boolean },
     }).validate(Template.currentData());
   });

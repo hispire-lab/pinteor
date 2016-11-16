@@ -1,7 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-// import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-// import slug from 'slug';
 import Users from '../users/users.js';
 import Boards from '../boards/boards.js';
 import Pins from './pins.js';
@@ -13,7 +11,7 @@ export const pinsInsert = new ValidatedMethod({
 
   validate: Pins.schemas.form.validator(),
 
-  run({ boardId, imageUrl, description, isPrivate }) {
+  run({ boardId, imageUrl, description }) {
     if (!this.userId) {
       throw new Meteor.Error(
         'pins.insert.notLoggedIn',
@@ -37,8 +35,43 @@ export const pinsInsert = new ValidatedMethod({
       boardId,
       description,
       imageUrl,
-      isPrivate,
     });
+  },
+
+});
+
+export const pinsUpdate = new ValidatedMethod({
+
+  name: 'pins.methods.updateData',
+
+  validate({ _id, modifier }) { // eslint-disable-line no-unused-vars
+    Pins.schemas.updateForm.validate(modifier, { modifier: true });
+  },
+
+  run({ _id, modifier }) {
+    if (!this.userId) {
+      throw new Meteor.Error(
+        'pins.update.notLoggedIn',
+        'Must be logged in to edit a pin.'
+      );
+    }
+
+    const pin = Pins.findOne({ _id });
+    if (!pin.isEditableBy(this.userId)) {
+      throw new Meteor.Error(
+        'pins.update.accessDenied',
+        'You don\'t have permission to edit this pin.'
+      );
+    }
+
+    const fieldsToSet = modifier.$set;
+    const board = Boards.findOne(
+      { _id: modifier.$set.boardId },
+      { fields: { isPrivate: 1 } }
+    );
+    fieldsToSet.isPrivate = board.isPrivate;
+    fieldsToSet.updatedAt = new Date();
+    return Pins.update({ _id }, { $set: fieldsToSet });
   },
 
 });

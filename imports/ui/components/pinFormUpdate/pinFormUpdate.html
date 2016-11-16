@@ -1,0 +1,33 @@
+<template name="pinFormUpdate">
+  <div class="modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h4 class="modal-title">Edit pin</h4>
+        </div>
+
+        <div class="modal-body">
+          {{#autoForm
+             id="pinFormUpdate"
+             type="method-update"
+             meteormethod="pins.methods.updateData"
+             singleMethodArgument=true
+             schema=schema
+             doc=pin
+             templateModal=templateModal
+          }}
+            {{> afQuickField name="boardId" options=boardIdOptions}}
+            {{> afQuickField name="description"}}
+            {{> afQuickField type="hidden" name="oldBoardId" value=pin.boardId}}
+            <button class="btn btn-danger js-delete">Delete</button>
+            <div class="pull-right">
+              <button class="btn btn-default js-cancel">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          {{/autoForm}}
+        </div>
+      </div>
+     </div>
+   </div>
+</template>

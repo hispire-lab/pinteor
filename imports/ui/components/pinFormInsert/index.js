@@ -1,0 +1,1 @@
+import './pinFormInsert.js';

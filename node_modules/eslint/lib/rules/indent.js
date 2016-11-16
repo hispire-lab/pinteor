@@ -684,9 +684,7 @@ module.exports = {
             let elements = (node.type === "ArrayExpression") ? node.elements : node.properties;
 
             // filter out empty elements example would be [ , 2] so remove first element as espree considers it as null
-            elements = elements.filter(function(elem) {
-                return elem !== null;
-            });
+            elements = elements.filter(elem => elem !== null);
 
             let nodeIndent;
             let elementsIndent;
@@ -695,19 +693,11 @@ module.exports = {
             // TODO - come up with a better strategy in future
             if (isNodeFirstInLine(node)) {
                 const parent = node.parent;
-                let effectiveParent = parent;
 
-                if (parent.type === "MemberExpression") {
-                    if (isNodeFirstInLine(parent)) {
-                        effectiveParent = parent.parent.parent;
-                    } else {
-                        effectiveParent = parent.parent;
-                    }
-                }
-                nodeIndent = getNodeIndent(effectiveParent).goodChar;
+                nodeIndent = getNodeIndent(parent).goodChar;
                 if (parentVarNode && parentVarNode.loc.start.line !== node.loc.start.line) {
                     if (parent.type !== "VariableDeclarator" || parentVarNode === parentVarNode.parent.declarations[0]) {
-                        if (parent.type === "VariableDeclarator" && parentVarNode.loc.start.line === effectiveParent.loc.start.line) {
+                        if (parent.type === "VariableDeclarator" && parentVarNode.loc.start.line === parent.loc.start.line) {
                             nodeIndent = nodeIndent + (indentSize * options.VariableDeclarator[parentVarNode.parent.kind]);
                         } else if (
                             parent.type === "ObjectExpression" ||
@@ -720,7 +710,7 @@ module.exports = {
                             nodeIndent = nodeIndent + indentSize;
                         }
                     }
-                } else if (!parentVarNode && !isFirstArrayElementOnSameLine(parent) && effectiveParent.type !== "MemberExpression" && effectiveParent.type !== "ExpressionStatement" && effectiveParent.type !== "AssignmentExpression" && effectiveParent.type !== "Property") {
+                } else if (!parentVarNode && !isFirstArrayElementOnSameLine(parent) && parent.type !== "MemberExpression" && parent.type !== "ExpressionStatement" && parent.type !== "AssignmentExpression" && parent.type !== "Property") {
                     nodeIndent = nodeIndent + indentSize;
                 }
 
@@ -827,7 +817,7 @@ module.exports = {
          * @returns {ASTNode[]} Filtered elements
          */
         function filterOutSameLineVars(node) {
-            return node.declarations.reduce(function(finalCollection, elem) {
+            return node.declarations.reduce((finalCollection, elem) => {
                 const lastElem = finalCollection[finalCollection.length - 1];
 
                 if ((elem.loc.start.line !== node.loc.start.line && !lastElem) ||

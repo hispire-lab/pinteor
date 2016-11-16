@@ -1,0 +1,28 @@
+<template name="pinFormInsert">
+  <div class="modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h4 class="modal-title">Create pin</h4>
+        </div>
+
+        <div class="modal-body">
+          {{#autoForm
+             id="pinFormInsert"
+             type="method"
+             meteormethod="pins.methods.insertData"
+             schema=schema
+             templateModal=templateModal
+          }}
+            {{> afQuickField name="imageUrl"}}
+            {{> afQuickField name="description"}}
+            {{> afFieldInput name="boardId" options=boardIdOptions}}
+            <button class="btn btn-default js-cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create</button>
+          {{/autoForm}}
+        </div>
+      </div>
+     </div>
+   </div>
+</template>

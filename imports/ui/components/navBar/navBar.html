@@ -1,6 +1,6 @@
 <template name="navBar">
   <div class="row">
-    <nav class="navbar navbar-default navbar-fixed-bottom">
+    <nav class="navbar navbar-default">
       <div class="container-fluid">
         <ul class="nav navbar-nav">
           <li>
@@ -36,6 +36,21 @@
                 <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
               </a>
             </div>
+          </li>
+          <li>
+            <!--
+              for links like buttons inside navbars li we need to wrap
+              the links inside a div.
+              see: https://github.com/twbs/bootstrap/issues/8878
+            !-->
+            <button
+              href={{pathFor 'App.user_page' username=currentUser.username}}
+              role="button"
+              class="btn btn-link btn-lg navbar-btn js-logout"
+              aria-label="Off"
+            >
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+            </button>
           </li>
         </ul>
       </div> <!-- /.container-fluid -->

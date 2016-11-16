@@ -40,3 +40,24 @@ AutoForm.addHooks('boardFormUpdate', {
     FlowRouter.go('App.board_page', { username, boardSlug });
   },
 });
+
+AutoForm.addHooks('pinFormInsert', {
+  onSuccess(formType, result) {
+    const pinId = result;
+    // Note: Modal.hide(this.template) not close the modal
+    // because this.template refers to the autoform template
+    // instance and not the modal one.
+    Modal.hide(this.template.data.templateModal);
+    // we should wait for the modal to close, and then redirect
+    FlowRouter.go('App.pin_page', { pinId });
+  },
+});
+
+AutoForm.addHooks('pinFormUpdate', {
+  onSuccess() {
+    // Note: Modal.hide(this.template) not close the modal
+    // because this.template refers to the autoform template
+    // instance and not the modal one.
+    Modal.hide(this.template.data.templateModal);
+  },
+});

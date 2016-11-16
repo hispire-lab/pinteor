@@ -5,8 +5,19 @@ import Users from '../../users/users.js';
 
 Meteor.publish('boards.list', function boardsListPublication(username) {
   new SimpleSchema({
-    username: { type: String },
+    username: { type: String, optional: true },
   }).validate({ username });
+
+  if (!username) {
+    if (!this.userId) {
+      return this.ready();
+    }
+    return Boards.find(
+      { userId: this.userId },
+      { fields: Boards.publicFields }
+    );
+  }
+
 
   const user = Users.findOne({ username });
   if (!user) {

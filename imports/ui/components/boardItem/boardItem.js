@@ -4,6 +4,7 @@ import { Mongo } from 'meteor/mongo';
 import { Modal } from 'meteor/peppelg:bootstrap-3-modal';
 import './boardItem.html';
 import '../boardFormUpdate';
+import '../../containers/pinListContainer';
 
 Template.boardItem.onCreated(function boardItemOnCreated() {
   this.autorun(() => {
@@ -25,6 +26,7 @@ Template.boardItem.onCreated(function boardItemOnCreated() {
       'board.createdAt': { type: Date },
       'board.imageUrl': { type: String }, // thos shoud be a regex
       'board.slug': { type: String },
+      'board.pinCount': { type: Number },
     }).validate(Template.currentData());
   });
 });

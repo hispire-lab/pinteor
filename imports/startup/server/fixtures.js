@@ -27,13 +27,29 @@ Meteor.startup(() => {
     userId: pitxonId,
     username: 'pitxon',
     name: 'cars',
-    imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
+    isPrivate: true,
+    // imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
   });
+
   Factory.create('pin', {
     userId: pitxonBoard.userId,
     username: pitxonBoard.username,
     boardId: pitxonBoard._id,
     imageUrl: 'http://www.fastcoolcars.com/images/Index%20page/2014vetteL.jpg',
+  });
+
+  Factory.create('pin', {
+    userId: pitxonBoard.userId,
+    username: pitxonBoard.username,
+    boardId: pitxonBoard._id,
+    imageUrl: 'https://s-media-cache-ak0.pinimg.com/originals/9f/70/c8/9f70c84c681c0199a23fbf814014c30f.jpg',
+  });
+
+  Factory.create('pin', {
+    userId: pitxonBoard.userId,
+    username: pitxonBoard.username,
+    boardId: pitxonBoard._id,
+    imageUrl: 'http://1.bp.blogspot.com/-TeIBE19TCDg/Tw7RFW7nmHI/AAAAAAAAAM8/GPrIU67OPuY/s1600/cool_car.jpg',
   });
 
   Boards.insert({
@@ -42,7 +58,7 @@ Meteor.startup(() => {
     name: 'dogs',
     description: chance.paragraph(),
     isPrivate: true,
-    imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
+    // imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
   });
 
   Boards.insert({
@@ -51,7 +67,7 @@ Meteor.startup(() => {
     username: 'pitxon',
     description: chance.paragraph(),
     isPrivate: true,
-    imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
+    // imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
   });
 
   Boards.insert({
@@ -60,7 +76,7 @@ Meteor.startup(() => {
     username: 'pitxon',
     description: chance.paragraph(),
     isPrivate: false,
-    imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
+    // imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
   });
 
   // giorgix boards
@@ -70,7 +86,7 @@ Meteor.startup(() => {
     username: 'giorgix',
     description: chance.paragraph(),
     isPrivate: true,
-    imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
+    // imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
   });
 
   Boards.insert({
@@ -79,6 +95,6 @@ Meteor.startup(() => {
     name: 'whisky',
     description: chance.paragraph(),
     isPrivate: false,
-    imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
+    // imageUrl: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
   });
 });

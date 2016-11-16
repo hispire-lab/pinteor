@@ -26,11 +26,9 @@ if (Meteor.isServer) {
             boardId: board._id,
             imageUrl: chance.url({ extensions: ['.jpg', '.gif', '.png'] }),
             description: 'description',
-            isPrivate: false,
           };
 
           pinsInsert._execute({ userId: user._id }, params);
-
           const pin = Pins.findOne({ userId: user._id });
           assert.equal(pin.userId, user._id);
           assert.equal(pin.username, user.username);
@@ -45,7 +43,6 @@ if (Meteor.isServer) {
             boardId: Random.id(),
             imageUrl: chance.url({ extensions: ['.jpg', '.gif', '.png'] }),
             description: 'description',
-            isPrivate: false,
           };
 
           assert.throws(() => {
@@ -57,7 +54,6 @@ if (Meteor.isServer) {
             boardId: Random.id(),
             imageUrl: chance.url({ extensions: ['.jpg', '.gif', '.png'] }),
             description: 'description',
-            isPrivate: false,
           };
 
           assert.throws(() => {

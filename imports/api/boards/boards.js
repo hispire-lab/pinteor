@@ -6,6 +6,7 @@ import { Factory } from 'meteor/dburles:factory';
 import Chance from 'chance';
 import slug from 'slug';
 import boardCountDenormalizer from './boardCountDenormalizer.js';
+import boardIsPrivateDenormalizer from './boardIsPrivateDenormalizer';
 
 class BoardsCollection extends Mongo.Collection {
   insert(doc, callback) {
@@ -17,6 +18,7 @@ class BoardsCollection extends Mongo.Collection {
   }
   update(selector, modifier) {
     const result = super.update(selector, modifier);
+    boardIsPrivateDenormalizer.afterUpdateBoard(selector, modifier);
     boardCountDenormalizer.afterUpdateBoard(selector, modifier);
     return result;
   }
@@ -94,12 +96,14 @@ function isNameAvailable() {  // eslint-disable-line consistent-return
 Boards.schemas = {};
 
 Boards.schemas.collection = new SimpleSchema({
+
   name: {
     type: String,
     min: 3,
     max: 10,
     custom: isNameAvailable,
   },
+
   slug: {
     type: String,
     autoValue() { // eslint-disable-line consistent-return
@@ -109,47 +113,64 @@ Boards.schemas.collection = new SimpleSchema({
       }
     },
   },
+
   description: {
     type: String,
     optional: true,
   },
+
   imageUrl: {
     type: String,
     optional: true,
     regEx: SimpleSchema.RegEx.Url,
+    defaultValue: 'https://www.makeupgeek.com/content/wp-content/themes/makeupgeek/images/placeholder-square.svg',
   },
+
   createdAt: {
     type: Date,
     optional: true,
   },
+
   userId: {
     type: String,
     regEx: SimpleSchema.RegEx.Id,
   },
+
   username: {
     type: String,
   },
+
   isPrivate: {
     type: Boolean,
     defaultValue: false,
   },
+
+  pinCount: {
+    type: Number,
+    defaultValue: 0,
+  },
+
 });
 
 Boards.schemas.form = new SimpleSchema({
+
   name: {
     type: String,
     min: 3,
     max: 10,
     custom: isNameAvailable,
   },
+
   description: {
     type: String,
     optional: true,
   },
+
   isPrivate: {
     type: Boolean,
     defaultValue: false,
   },
+
 });
 
 Boards.attachSchema(Boards.schemas.collection);
@@ -170,6 +191,7 @@ Boards.publicFields = {
   description: 1,
   imageUrl: 1,
   isPrivate: 1,
+  pinCount: 1,
 };
 
 const chance = new Chance();
@@ -182,10 +204,11 @@ Factory.define('board', Boards, {
   username: chance.name(),
   name() { return chance.word({ length: 6 }); },
   description: chance.sentence(),
-  isPrivate: true,
+  isPrivate: false,
   createdAt: new Date(),
   imageUrl: chance.url({ extensions: ['.jpg', '.gif', '.png'] }),
   slug() { return slug(this.name); },
+  pinCount: 0,
 });
 
 export default Boards;

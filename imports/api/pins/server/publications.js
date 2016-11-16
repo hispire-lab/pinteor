@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import Users from '../../users/users.js';
+import Boards from '../../boards/boards.js';
 import Pins from '../pins.js';
 
 Meteor.publish('pins.single', function pinsSinglePublication(pinId) {
@@ -25,7 +26,7 @@ Meteor.publish('pins.single', function pinsSinglePublication(pinId) {
   return Pins.find({ _id: pinId }, { fields: Pins.publicFields });
 });
 
-Meteor.publish('pins.list', function pinsListPublication(username) {
+Meteor.publish('pins.listAll', function pinsListAllPublication(username) {
   new SimpleSchema({
     username: { type: String },
   }).validate({ username });
@@ -35,6 +36,7 @@ Meteor.publish('pins.list', function pinsListPublication(username) {
     return this.ready();
   }
 
+  /*
   const isCurrentUser = user._id === this.userId;
   if (isCurrentUser) {
     return Pins.find(
@@ -42,9 +44,40 @@ Meteor.publish('pins.list', function pinsListPublication(username) {
       { fields: Pins.publicFields }
     );
   }
+  */
 
   return Pins.find(
     { userId: user._id, isPrivate: false },
+    { fields: Pins.publicFields }
+  );
+});
+
+Meteor.publish('pins.list', function pinsListPublication(username, boardSlug) {
+  new SimpleSchema({
+    username: { type: String },
+    boardSlug: { type: String },
+  }).validate({ username, boardSlug });
+
+  const user = Users.findOne({ username });
+  if (!user) {
+    return this.ready();
+  }
+
+  const board = Boards.findOne({ userId: user._id, slug: boardSlug });
+  if (!board) {
+    return this.ready();
+  }
+
+  const isCurrentUser = user._id === this.userId;
+  if (isCurrentUser) {
+    return Pins.find(
+      { userId: user._id, boardId: board._id },
+      { fields: Pins.publicFields }
+    );
+  }
+
+  return Pins.find(
+    { userId: user._id, boardId: board._id, isPrivate: false },
     { fields: Pins.publicFields }
   );
 });

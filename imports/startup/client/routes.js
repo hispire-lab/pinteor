@@ -7,7 +7,7 @@ import '../../ui/containers/userPageContainer';
 import '../../ui/containers/boardPageContainer';
 import '../../ui/containers/boardThumbnailListContainer';
 import '../../ui/containers/pinContainer';
-import '../../ui/containers/pinThumbnailListContainer';
+import '../../ui/containers/pinListAllContainer';
 import '../../ui/pages/homePage';
 import '../../ui/pages/userPage';
 
@@ -65,7 +65,7 @@ FlowRouter.route('/:username/pins', {
     BlazeLayout.render('appContainer', {
       regions: {
         appLayout: { main: 'userPageContainer' },
-        userLayout: { main: 'pinThumbnailListContainer' },
+        userLayout: { main: 'pinListAllContainer' },
       },
     });
   },
